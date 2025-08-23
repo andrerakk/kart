@@ -930,6 +930,354 @@ function updateRecordsTab(championship) {
     }
 }
 
+// Função para gerar texto formatado da classificação
+function generateClassificationText(championship) {
+    const indicators = championship.getAllIndicators();
+    const switchElement = document.querySelector('.switch input[type="checkbox"]');
+    const useDiscard = switchElement ? switchElement.checked : false;
+
+    const standings = useDiscard ? indicators.finalStandings : indicators.finalStandingsWithoutDiscard;
+    const discardText = useDiscard ? ' (com descarte)' : ' (sem descarte)';
+    const currentDate = new Date().toLocaleDateString('pt-BR');
+    const progress = indicators.stagesProgress;
+
+    let text = `🏁 CLASSIFICAÇÃO GERAL DO CAMPEONATO${discardText}\n`;
+    text += `📅 Atualização: ${currentDate} | Progresso: ${progress}\n`;
+    text += `${'='.repeat(50)}\n\n`;
+
+    standings.forEach((driver, index) => {
+        const position = index + 1;
+        const points = useDiscard ? driver.totalPointsWithDiscard : driver.totalPoints;
+
+        text += `${position}º - ${driver.name}\n`;
+        text += `   📊 ${points} pontos | 🏆 ${driver.victories} vitórias\n`;
+        text += `   🚦 ${driver.poles} poles | ⚡ ${driver.fastestLaps} v.rápidas\n`;
+        text += `   🏁 ${driver.racesParticipated} baterias | 📍 ${driver.stagesParticipated.length} etapas\n`;
+        text += `\n`;
+    });
+
+    text += `${'='.repeat(50)}\n`;
+    text += `🏎️ Troféu Cataratas de Kart Rental 2025\n`;
+
+    return text;
+}
+
+// Função para copiar classificação para clipboard
+async function copyClassificationToClipboard(championship) {
+    try {
+        const text = generateClassificationText(championship);
+        await navigator.clipboard.writeText(text);
+
+        showExportFeedback('Classificação copiada para a área de transferência!', 'success');
+        return true;
+    } catch (err) {
+        console.error('Erro ao copiar:', err);
+        showExportFeedback('Erro ao copiar classificação', 'error');
+        return false;
+    }
+}
+
+// Função para baixar classificação como arquivo de texto
+function downloadClassificationAsText(championship) {
+    try {
+        const text = generateClassificationText(championship);
+        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `classificacao_campeonato_${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        showExportFeedback('Arquivo baixado com sucesso!', 'success');
+        return true;
+    } catch (err) {
+        console.error('Erro ao baixar:', err);
+        showExportFeedback('Erro ao baixar arquivo', 'error');
+        return false;
+    }
+}
+
+// Função para gerar HTML igual ao layout dos cards da classificação
+function generateClassificationHTML(championship) {
+    const indicators = championship.getAllIndicators();
+    const switchElement = document.querySelector('.switch input[type="checkbox"]');
+    const useDiscard = switchElement ? switchElement.checked : false;
+
+    const standings = useDiscard ? indicators.finalStandings : indicators.finalStandingsWithoutDiscard;
+    const discardText = useDiscard ? ' (com descarte)' : ' (sem descarte)';
+    const currentDate = new Date().toLocaleDateString('pt-BR');
+    const progress = indicators.stagesProgress;
+
+    let html = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background: white;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h2 style="color: #111827; margin: 0 0 8px 0; font-size: 1.8rem; font-weight: 700;">Classificação Geral do Campeonato</h2>
+                <p style="color: #6b7280; margin: 0; font-size: 14px;">${discardText} • Atualização: ${currentDate} • Progresso: ${progress}</p>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+    `;
+
+    standings.forEach((driver, index) => {
+        const position = index + 1;
+        const points = useDiscard ? driver.totalPointsWithDiscard : driver.totalPoints;
+
+        // Estilo igual aos cards da classificação
+        let cardClass = '';
+        let positionClass = '';
+        let gradient = '';
+
+        if (position === 1) {
+            cardClass = 'leader';
+            positionClass = 'position-1';
+            gradient = 'background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);';
+        } else if (position === 2) {
+            positionClass = 'position-2';
+            gradient = 'background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);';
+        } else if (position === 3) {
+            positionClass = 'position-3';
+            gradient = 'background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);';
+        } else {
+            positionClass = 'position-other';
+            gradient = 'background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);';
+        }
+
+        const boxShadow = position === 1 ? 'box-shadow: 0 4px 20px rgba(245, 158, 11, 0.15);' : 'box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);';
+        const border = position === 1 ? 'border: 2px solid #f59e0b;' : 'border: 1px solid #e5e7eb;';
+
+        html += `
+            <div style="${gradient} ${border} ${boxShadow} border-radius: 12px; padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div style="width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; background: white; color: #111827; border: 2px solid #e5e7eb;">
+                            ${position}º
+                        </div>
+                        <div>
+                            <h3 style="margin: 0 0 4px 0; color: #111827; font-weight: 600; font-size: 20px;">${driver.name}</h3>
+                            <p style="margin: 0; color: #6b7280; font-size: 14px;">${driver.racesParticipated} baterias completas</p>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <h2 style="margin: 0 0 4px 0; color: #111827; font-weight: 700; font-size: 32px;">${points}</h2>
+                        <p style="margin: 0; color: #6b7280; font-size: 14px;">pontos</p>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+                    <div style="text-align: center; padding: 12px; background: rgba(255, 255, 255, 0.8); border-radius: 8px;">
+                        <p style="margin: 0 0 4px 0; color: #dc2626; font-weight: 700; font-size: 20px;">${driver.victories}</p>
+                        <p style="margin: 0; color: #6b7280; font-size: 12px;">Vitórias</p>
+                    </div>
+                    <div style="text-align: center; padding: 12px; background: rgba(255, 255, 255, 0.8); border-radius: 8px;">
+                        <p style="margin: 0 0 4px 0; color: #2563eb; font-weight: 700; font-size: 20px;">${driver.poles}</p>
+                        <p style="margin: 0; color: #6b7280; font-size: 12px;">Poles</p>
+                    </div>
+                    <div style="text-align: center; padding: 12px; background: rgba(255, 255, 255, 0.8); border-radius: 8px;">
+                        <p style="margin: 0 0 4px 0; color: #7c3aed; font-weight: 700; font-size: 20px;">${driver.fastestLaps}</p>
+                        <p style="margin: 0; color: #6b7280; font-size: 12px;">V. Rápidas</p>
+                    </div>
+                    <div style="text-align: center; padding: 12px; background: rgba(255, 255, 255, 0.8); border-radius: 8px;">
+                        <p style="margin: 0 0 4px 0; color: #059669; font-weight: 700; font-size: 20px;">${driver.stagesParticipated.length}</p>
+                        <p style="margin: 0; color: #6b7280; font-size: 12px;">Etapas</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                <p style="color: #6b7280; font-size: 12px; margin: 0;">Troféu Cataratas de Kart Rental 2025</p>
+            </div>
+        </div>
+    `;
+
+    return html;
+}
+
+// Função para exportar como imagem
+async function exportClassificationAsImage(championship) {
+    try {
+        // Verifica se html2canvas está disponível
+        if (typeof html2canvas === 'undefined') {
+            showExportFeedback('Erro: Biblioteca html2canvas não encontrada. Adicione no HTML: <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>', 'error');
+            return;
+        }
+
+        // Cria um elemento temporário com o HTML da classificação
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = generateClassificationHTML(championship);
+        tempDiv.style.position = 'absolute';
+        tempDiv.style.left = '-9999px';
+        tempDiv.style.top = '0';
+        document.body.appendChild(tempDiv);
+
+        // Aguarda um momento para o DOM ser atualizado
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        // Usa html2canvas para converter em imagem
+        const canvas = await html2canvas(tempDiv.firstElementChild, {
+            backgroundColor: '#ffffff',
+            scale: 2, // Para melhor qualidade
+            useCORS: true,
+            allowTaint: true,
+            width: 900,
+            height: tempDiv.firstElementChild.offsetHeight
+        });
+
+        // Remove elemento temporário
+        document.body.removeChild(tempDiv);
+
+        // Converte canvas para blob e baixa
+        canvas.toBlob(function(blob) {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `classificacao_campeonato_${new Date().toISOString().split('T')[0]}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            showExportFeedback('Imagem baixada com sucesso!', 'success');
+        }, 'image/png');
+
+    } catch (err) {
+        console.error('Erro ao exportar imagem:', err);
+        showExportFeedback('Erro ao gerar imagem', 'error');
+    }
+}
+
+// Função para abrir classificação em nova janela para impressão
+function printClassification(championship) {
+    const html = generateClassificationHTML(championship);
+    const printWindow = window.open('', '_blank');
+
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Classificação do Campeonato</title>
+            <meta charset="utf-8">
+            <style>
+                @media print {
+                    body { margin: 0; }
+                    @page { margin: 1cm; }
+                }
+                body { margin: 20px; }
+            </style>
+        </head>
+        <body>
+            ${html}
+        </body>
+        </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.focus();
+
+    // Auto-print após carregar
+    setTimeout(() => {
+        printWindow.print();
+    }, 500);
+}
+
+// Função para mostrar feedback visual
+function showExportFeedback(message, type) {
+    // Remove feedback anterior se existir
+    const existingFeedback = document.querySelector('.export-feedback');
+    if (existingFeedback) {
+        existingFeedback.remove();
+    }
+
+    const feedback = document.createElement('div');
+    feedback.className = 'export-feedback';
+    feedback.textContent = message;
+
+    const bgColor = type === 'success' ? '#4caf50' : '#f44336';
+    feedback.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${bgColor};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        z-index: 10000;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease;
+        max-width: 300px;
+        font-size: 14px;
+    `;
+
+    // Adiciona CSS da animação se não existir
+    if (!document.querySelector('#export-feedback-css')) {
+        const style = document.createElement('style');
+        style.id = 'export-feedback-css';
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    document.body.appendChild(feedback);
+
+    // Remove após 4 segundos
+    setTimeout(() => {
+        if (feedback.parentNode) {
+            feedback.remove();
+        }
+    }, 4000);
+}
+
+// Função para criar botões de exportação
+function createExportButtons() {
+    return `
+        <div class="export-buttons" style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+            <button onclick="copyClassificationToClipboard(championship)" 
+                    style="background: #1976d2; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: background 0.2s;">
+                <i class="material-icons" style="font-size: 18px;">content_copy</i>
+                Copiar
+            </button>
+            
+            <button onclick="downloadClassificationAsText(championship)" 
+                    style="background: #388e3c; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: background 0.2s;">
+                <i class="material-icons" style="font-size: 18px;">download</i>
+                Baixar TXT
+            </button>
+            
+            <button onclick="exportClassificationAsImage(championship)" 
+                    style="background: #e91e63; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: background 0.2s;">
+                <i class="material-icons" style="font-size: 18px;">image</i>
+                Salvar PNG
+            </button>
+            
+            <button onclick="printClassification(championship)" 
+                    style="background: #7b1fa2; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: background 0.2s;">
+                <i class="material-icons" style="font-size: 18px;">print</i>
+                Imprimir/PDF
+            </button>
+        </div>
+    `;
+}
+
+// Função para adicionar botões de exportação à classificação
+function addExportButtonsToClassification() {
+    const classificationTitle = document.querySelector('#geral h2');
+    if (classificationTitle && !document.querySelector('.export-buttons')) {
+        classificationTitle.insertAdjacentHTML('afterend', createExportButtons());
+    }
+}
 
 function initializeCompleteSystem(championship) {
     const originalAddStage = championship.addStage.bind(championship);
@@ -952,4 +1300,5 @@ function initializeCompleteSystem(championship) {
     initializeTabsSystem(championship);
     updateStatsCardsAndClassification(championship);
     updateRecordsTab(championship);
+    addExportButtonsToClassification();
 }
