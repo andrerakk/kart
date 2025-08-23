@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3º Troféu Cataratas de Kart Rental 2025</title>
+    
+    <!-- Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css">
+
+
+
+</head>
+<body>
+    <!-- Header -->
+    <div class="header-gradient">
+        <div class="header-content">
+            <div class="header-title">
+                <h1>3º Troféu Cataratas de Kart Rental 2025</h1>
+                <p>Dashboard do Campeonato - Rental Trophy (13hp)</p>
+            </div>
+            <div class="header-info">
+                <h2>Etapas Realizadas</h2>
+                <p>0/5</p>
+                <div class="progress">
+                    <div class="determinate" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="main-container">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <p>Líder</p>
+                        <h3 id="leader-name"><!-- Gerado Dinâmicamente --></h3>
+                    </div>
+                    <i class="material-icons stat-icon" style="color: #eab308;">emoji_events</i>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <p>Pilotos</p>
+                        <h3 id="total-drivers"><!-- Gerado Dinâmicamente --></h3>
+                    </div>
+                    <i class="material-icons stat-icon" style="color: #1976d2;">people</i>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <p>Rei das Voltas Rápidas</p>
+                        <h3 id="fast-king"><!-- Gerado Dinâmicamente --></h3>
+                    </div>
+                    <i class="material-icons stat-icon" style="color: #4a148c;">flash_on</i>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <p>Mais Vitórias</p>
+                        <h3 id="most-victories"><!-- Gerado Dinâmicamente --></h3>
+                    </div>
+                    <i class="material-icons stat-icon" style="color: #059669;">emoji_events</i>
+                </div>
+            </div>
+        </div>
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <!-- Gerado Dinâmicamente -->
+        </div>
+        <!-- Tab Contents -->
+        <!-- Classificação Geral -->
+        <div id="geral" class="tab-content active">
+            <h2 style="color: #111827; font-weight: 700; margin-bottom: 16px; font-size: 1.8rem;">Classificação Geral do Campeonato</h2>
+            <div class="switch">
+                <label>
+                    <input type="checkbox">
+                    <span class="lever"></span>
+                    considerar descartes
+                </label>
+            </div>
+            <br>
+            <div id="classification-list"><div class="classification-card leader">
+                <div class="classification-header">
+                    <div class="pilot-info">
+                        <div class="position-badge position-1">1º</div>
+                        <div>
+                            <h3 class="pilot-name">Andre Rak</h3>
+                            <p class="pilot-subtitle">6 baterias completas</p>
+                        </div>
+                    </div>
+                    <div class="points-display">
+                        <h2 class="points-number">89</h2>
+                        <p class="points-label">pontos</p>
+                    </div>
+                </div>
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <p class="mini-stat-value victories">3</p>
+                        <p class="mini-stat-label">Vitórias</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value poles">2</p>
+                        <p class="mini-stat-label">Poles</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value fastest">1</p>
+                        <p class="mini-stat-label">V. Rápidas</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value stages">3</p>
+                        <p class="mini-stat-label">Etapas</p>
+                    </div>
+                </div>
+            </div><div class="classification-card">
+                <div class="classification-header">
+                    <div class="pilot-info">
+                        <div class="position-badge position-2">2º</div>
+                        <div>
+                            <h3 class="pilot-name">José Rehrig</h3>
+                            <p class="pilot-subtitle">6 baterias completas</p>
+                        </div>
+                    </div>
+                    <div class="points-display">
+                        <h2 class="points-number">79</h2>
+                        <p class="points-label">pontos</p>
+                    </div>
+                </div>
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <p class="mini-stat-value victories">2</p>
+                        <p class="mini-stat-label">Vitórias</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value poles">0</p>
+                        <p class="mini-stat-label">Poles</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value fastest">0</p>
+                        <p class="mini-stat-label">V. Rápidas</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value stages">3</p>
+                        <p class="mini-stat-label">Etapas</p>
+                    </div>
+                </div>
+            </div><div class="classification-card">
+                <div class="classification-header">
+                    <div class="pilot-info">
+                        <div class="position-badge position-3">3º</div>
+                        <div>
+                            <h3 class="pilot-name">Tiago Avila</h3>
+                            <p class="pilot-subtitle">6 baterias completas</p>
+                        </div>
+                    </div>
+                    <div class="points-display">
+                        <h2 class="points-number">74</h2>
+                        <p class="points-label">pontos</p>
+                    </div>
+                </div>
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <p class="mini-stat-value victories">1</p>
+                        <p class="mini-stat-label">Vitórias</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value poles">1</p>
+                        <p class="mini-stat-label">Poles</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value fastest">3</p>
+                        <p class="mini-stat-label">V. Rápidas</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value stages">3</p>
+                        <p class="mini-stat-label">Etapas</p>
+                    </div>
+                </div>
+            </div><div class="classification-card">
+                <div class="classification-header">
+                    <div class="pilot-info">
+                        <div class="position-badge position-other">4º</div>
+                        <div>
+                            <h3 class="pilot-name">Mohamad Jabban</h3>
+                            <p class="pilot-subtitle">4 baterias completas</p>
+                        </div>
+                    </div>
+                    <div class="points-display">
+                        <h2 class="points-number">48</h2>
+                        <p class="points-label">pontos</p>
+                    </div>
+                </div>
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <p class="mini-stat-value victories">0</p>
+                        <p class="mini-stat-label">Vitórias</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value poles">0</p>
+                        <p class="mini-stat-label">Poles</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value fastest">1</p>
+                        <p class="mini-stat-label">V. Rápidas</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value stages">2</p>
+                        <p class="mini-stat-label">Etapas</p>
+                    </div>
+                </div>
+            </div><div class="classification-card">
+                <div class="classification-header">
+                    <div class="pilot-info">
+                        <div class="position-badge position-other">5º</div>
+                        <div>
+                            <h3 class="pilot-name">Huan Borges</h3>
+                            <p class="pilot-subtitle">4 baterias completas</p>
+                        </div>
+                    </div>
+                    <div class="points-display">
+                        <h2 class="points-number">44</h2>
+                        <p class="points-label">pontos</p>
+                    </div>
+                </div>
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <p class="mini-stat-value victories">0</p>
+                        <p class="mini-stat-label">Vitórias</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value poles">0</p>
+                        <p class="mini-stat-label">Poles</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value fastest">1</p>
+                        <p class="mini-stat-label">V. Rápidas</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value stages">2</p>
+                        <p class="mini-stat-label">Etapas</p>
+                    </div>
+                </div>
+            </div><div class="classification-card">
+                <div class="classification-header">
+                    <div class="pilot-info">
+                        <div class="position-badge position-other">6º</div>
+                        <div>
+                            <h3 class="pilot-name">César Zarate</h3>
+                            <p class="pilot-subtitle">4 baterias completas</p>
+                        </div>
+                    </div>
+                    <div class="points-display">
+                        <h2 class="points-number">39</h2>
+                        <p class="points-label">pontos</p>
+                    </div>
+                </div>
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <p class="mini-stat-value victories">0</p>
+                        <p class="mini-stat-label">Vitórias</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value poles">0</p>
+                        <p class="mini-stat-label">Poles</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value fastest">0</p>
+                        <p class="mini-stat-label">V. Rápidas</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value stages">2</p>
+                        <p class="mini-stat-label">Etapas</p>
+                    </div>
+                </div>
+            </div><div class="classification-card">
+                <div class="classification-header">
+                    <div class="pilot-info">
+                        <div class="position-badge position-other">7º</div>
+                        <div>
+                            <h3 class="pilot-name">Lucas Pereira</h3>
+                            <p class="pilot-subtitle">2 baterias completas</p>
+                        </div>
+                    </div>
+                    <div class="points-display">
+                        <h2 class="points-number">26</h2>
+                        <p class="points-label">pontos</p>
+                    </div>
+                </div>
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <p class="mini-stat-value victories">0</p>
+                        <p class="mini-stat-label">Vitórias</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value poles">0</p>
+                        <p class="mini-stat-label">Poles</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value fastest">0</p>
+                        <p class="mini-stat-label">V. Rápidas</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value stages">1</p>
+                        <p class="mini-stat-label">Etapas</p>
+                    </div>
+                </div>
+            </div><div class="classification-card">
+                <div class="classification-header">
+                    <div class="pilot-info">
+                        <div class="position-badge position-other">8º</div>
+                        <div>
+                            <h3 class="pilot-name">Jefferson Schlosser</h3>
+                            <p class="pilot-subtitle">2 baterias completas</p>
+                        </div>
+                    </div>
+                    <div class="points-display">
+                        <h2 class="points-number">23</h2>
+                        <p class="points-label">pontos</p>
+                    </div>
+                </div>
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <p class="mini-stat-value victories">0</p>
+                        <p class="mini-stat-label">Vitórias</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value poles">0</p>
+                        <p class="mini-stat-label">Poles</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value fastest">0</p>
+                        <p class="mini-stat-label">V. Rápidas</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value stages">1</p>
+                        <p class="mini-stat-label">Etapas</p>
+                    </div>
+                </div>
+            </div><div class="classification-card">
+                <div class="classification-header">
+                    <div class="pilot-info">
+                        <div class="position-badge position-other">9º</div>
+                        <div>
+                            <h3 class="pilot-name">Sergio Broeto</h3>
+                            <p class="pilot-subtitle">2 baterias completas</p>
+                        </div>
+                    </div>
+                    <div class="points-display">
+                        <h2 class="points-number">23</h2>
+                        <p class="points-label">pontos</p>
+                    </div>
+                </div>
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <p class="mini-stat-value victories">0</p>
+                        <p class="mini-stat-label">Vitórias</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value poles">0</p>
+                        <p class="mini-stat-label">Poles</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value fastest">0</p>
+                        <p class="mini-stat-label">V. Rápidas</p>
+                    </div>
+                    <div class="mini-stat">
+                        <p class="mini-stat-value stages">1</p>
+                        <p class="mini-stat-label">Etapas</p>
+                    </div>
+                </div>
+            </div></div>
+        </div>
+        <!-- Etapa 1 -->
+        <div id="etapa1" class="tab-content">
+            <h2 style="color: #111827; font-weight: 700; margin-bottom: 16px; font-size: 1.8rem;">Etapa 1 - Traçado Completo</h2>
+            <div class="results-grid" id="etapa1-results"><div class="result-card">
+                <div class="result-title">
+                    <i class="material-icons" style="color: #eab308;">emoji_events</i>
+                    Tomada de Tempo
+                </div>
+
+                <div class="result-item winner">
+                    <div class="result-left">
+                        <div class="position-badge position-1">1</div>
+                        <div>
+                            <span style="font-weight: 500;">Tiago Avila</span>
+                            <span class="badge badge-pole">Pole Position</span>
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.685</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-2">2</div>
+                        <div>
+                            <span style="font-weight: 500;">Andre Rak</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.800</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-3">3</div>
+                        <div>
+                            <span style="font-weight: 500;">José Rehrig</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.921</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">4</div>
+                        <div>
+                            <span style="font-weight: 500;">Lucas Pereira</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:50.145</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">5</div>
+                        <div>
+                            <span style="font-weight: 500;">Mohamad Jabban</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:50.145</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">6</div>
+                        <div>
+                            <span style="font-weight: 500;">Malio Benitez</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:50.348</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">7</div>
+                        <div>
+                            <span style="font-weight: 500;">Nestor Correa</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:51.587</div>
+
+                    </div>
+                </div>
+
+            </div><div class="result-card">
+                <div class="result-title">
+                    <i class="material-icons" style="color: #eab308;">flag</i>
+                    1ª Bateria
+                </div>
+
+                <div class="result-item winner">
+                    <div class="result-left">
+                        <div class="position-badge position-1">1</div>
+                        <div>
+                            <span style="font-weight: 500;">José Rehrig</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.798</div>
+                        <div class="result-total">00:12:48.998</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-2">2</div>
+                        <div>
+                            <span style="font-weight: 500;">Lucas Pereira</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.676</div>
+                        <div class="result-total">00:12:49.812</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-3">3</div>
+                        <div>
+                            <span style="font-weight: 500;">Andre Rak</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.684</div>
+                        <div class="result-total">00:12:51.541</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">4</div>
+                        <div>
+                            <span style="font-weight: 500;">Mohamad Jabban</span>
+                            <span class="badge badge-fastest">Melhor Volta</span>
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.612</div>
+                        <div class="result-total">00:12:51.709</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">5</div>
+                        <div>
+                            <span style="font-weight: 500;">Tiago Avila</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.916</div>
+                        <div class="result-total">00:13:03.652</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">6</div>
+                        <div>
+                            <span style="font-weight: 500;">Malio Benitez</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:50.261</div>
+                        <div class="result-total">00:13:03.652</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">7</div>
+                        <div>
+                            <span style="font-weight: 500;">Nestor Correa</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:50.750</div>
+                        <div class="result-total">00:13:10.389</div>
+                    </div>
+                </div>
+
+            </div><div class="result-card">
+                <div class="result-title">
+                    <i class="material-icons" style="color: #eab308;">flag</i>
+                    2ª Bateria
+                </div>
+
+                <div class="result-item winner">
+                    <div class="result-left">
+                        <div class="position-badge position-1">1</div>
+                        <div>
+                            <span style="font-weight: 500;">José Rehrig</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.630</div>
+                        <div class="result-total">00:13:07.820</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-2">2</div>
+                        <div>
+                            <span style="font-weight: 500;">Andre Rak</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.481</div>
+                        <div class="result-total">00:13:07.869</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-3">3</div>
+                        <div>
+                            <span style="font-weight: 500;">Lucas Pereira</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.387</div>
+                        <div class="result-total">00:13:08.023</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">4</div>
+                        <div>
+                            <span style="font-weight: 500;">Mohamad Jabban</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.466</div>
+                        <div class="result-total">00:13:08.679</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">5</div>
+                        <div>
+                            <span style="font-weight: 500;">Tiago Avila</span>
+                            <span class="badge badge-fastest">Melhor Volta</span><span class="badge badge-record">Recorde do Traçado</span>
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.367</div>
+                        <div class="result-total">00:13:08.759</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">6</div>
+                        <div>
+                            <span style="font-weight: 500;">Malio Benitez</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.745</div>
+                        <div class="result-total">00:13:10.353</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">7</div>
+                        <div>
+                            <span style="font-weight: 500;">Nestor Correa</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:50.373</div>
+                        <div class="result-total">00:13:32.396</div>
+                    </div>
+                </div>
+
+            </div></div>
+        </div>
+        <!-- Etapa 2 -->
+        <div id="etapa2" class="tab-content">
+            <h2 style="color: #111827; font-weight: 700; margin-bottom: 16px; font-size: 1.8rem;">Etapa 2 - Traçado Curto</h2>
+            <div class="results-grid" id="etapa2-results"><div class="result-card">
+                <div class="result-title">
+                    <i class="material-icons" style="color: #eab308;">emoji_events</i>
+                    Tomada de Tempo
+                </div>
+
+                <div class="result-item winner">
+                    <div class="result-left">
+                        <div class="position-badge position-1">1</div>
+                        <div>
+                            <span style="font-weight: 500;">Andre Rak</span>
+                            <span class="badge badge-pole">Pole Position</span>
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:44.112</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-2">2</div>
+                        <div>
+                            <span style="font-weight: 500;">Mohamad Jabban</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:44.135</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-3">3</div>
+                        <div>
+                            <span style="font-weight: 500;">Tiago Avila</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:44.261</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">4</div>
+                        <div>
+                            <span style="font-weight: 500;">Competidor 7</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:44.764</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">5</div>
+                        <div>
+                            <span style="font-weight: 500;">Huan Borges</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:44.864</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">6</div>
+                        <div>
+                            <span style="font-weight: 500;">César Zarate</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:45.228</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">7</div>
+                        <div>
+                            <span style="font-weight: 500;">José Rehrig</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:45.289</div>
+
+                    </div>
+                </div>
+
+            </div><div class="result-card">
+                <div class="result-title">
+                    <i class="material-icons" style="color: #eab308;">flag</i>
+                    1ª Bateria
+                </div>
+
+                <div class="result-item winner">
+                    <div class="result-left">
+                        <div class="position-badge position-1">1</div>
+                        <div>
+                            <span style="font-weight: 500;">Andre Rak</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:44.155</div>
+                        <div class="result-total">00:13:39.565</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-2">2</div>
+                        <div>
+                            <span style="font-weight: 500;">Mohamad Jabban</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:44.289</div>
+                        <div class="result-total">00:13:42.914</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-3">3</div>
+                        <div>
+                            <span style="font-weight: 500;">Huan Borges</span>
+                            <span class="badge badge-fastest">Melhor Volta</span>
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:44.107</div>
+                        <div class="result-total">00:13:43.979</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">4</div>
+                        <div>
+                            <span style="font-weight: 500;">José Rehrig</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:44.388</div>
+                        <div class="result-total">00:13:46.453</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">5</div>
+                        <div>
+                            <span style="font-weight: 500;">Tiago Avila</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:44.331</div>
+                        <div class="result-total">00:13:49.357</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">6</div>
+                        <div>
+                            <span style="font-weight: 500;">César Zarate</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:44.470</div>
+                        <div class="result-total">00:13:55.143</div>
+                    </div>
+                </div>
+
+            </div><div class="result-card">
+                <div class="result-title">
+                    <i class="material-icons" style="color: #eab308;">flag</i>
+                    2ª Bateria
+                </div>
+
+                <div class="result-item winner">
+                    <div class="result-left">
+                        <div class="position-badge position-1">1</div>
+                        <div>
+                            <span style="font-weight: 500;">Tiago Avila</span>
+                            <span class="badge badge-fastest">Melhor Volta</span><span class="badge badge-record">Recorde do Traçado</span>
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:43.909</div>
+                        <div class="result-total">00:13:34.493</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-2">2</div>
+                        <div>
+                            <span style="font-weight: 500;">Andre Rak</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:44.151</div>
+                        <div class="result-total">00:13:34.731</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-3">3</div>
+                        <div>
+                            <span style="font-weight: 500;">Huan Borges</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:44.378</div>
+                        <div class="result-total">00:13:44.335</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">4</div>
+                        <div>
+                            <span style="font-weight: 500;">César Zarate</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:44.639</div>
+                        <div class="result-total">00:13:47.427</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">5</div>
+                        <div>
+                            <span style="font-weight: 500;">Mohamad Jabban</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:44.266</div>
+                        <div class="result-total">00:13:48.021</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">6</div>
+                        <div>
+                            <span style="font-weight: 500;">José Rehrig</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:44.493</div>
+                        <div class="result-total">00:13:54.461</div>
+                    </div>
+                </div>
+
+            </div>
+                <div class="result-card">
+                <div class="result-title">
+                    <i class="material-icons" style="color: #dc2626;">warning</i>
+                    Penalizações
+                </div>
+
+                <div class="result-item" style="background-color: #fef2f2; border: 1px solid #fca5a5;">
+                    <div>
+                        <strong style="color: #dc2626;">Mohamad Jabban:</strong>
+                        <span style="color: #dc2626;">Penalizado em 3 segundos por atitude antidesportiva contra #00</span>
+                    </div>
+                </div>
+
+            </div></div>
+        </div>
+        <!-- Etapa 3 -->
+        <div id="etapa3" class="tab-content">
+            <h2 style="color: #111827; font-weight: 700; margin-bottom: 16px; font-size: 1.8rem;">Etapa 3 - Traçado Completo</h2>
+            <div class="results-grid" id="etapa3-results"><div class="result-card">
+                <div class="result-title">
+                    <i class="material-icons" style="color: #eab308;">emoji_events</i>
+                    Tomada de Tempo
+                </div>
+
+                <div class="result-item winner">
+                    <div class="result-left">
+                        <div class="position-badge position-1">1</div>
+                        <div>
+                            <span style="font-weight: 500;">Andre Rak</span>
+                            <span class="badge badge-pole">Pole Position</span>
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:48.975</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-2">2</div>
+                        <div>
+                            <span style="font-weight: 500;">Tiago Avila</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.069</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-3">3</div>
+                        <div>
+                            <span style="font-weight: 500;">Jefferson Schlosser</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.182</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">4</div>
+                        <div>
+                            <span style="font-weight: 500;">Huan Borges</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.208</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">5</div>
+                        <div>
+                            <span style="font-weight: 500;">José Rehrig</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.449</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">6</div>
+                        <div>
+                            <span style="font-weight: 500;">Sergio Broeto</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.535</div>
+
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">7</div>
+                        <div>
+                            <span style="font-weight: 500;">César Zarate</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.880</div>
+
+                    </div>
+                </div>
+
+            </div><div class="result-card">
+                <div class="result-title">
+                    <i class="material-icons" style="color: #eab308;">flag</i>
+                    1ª Bateria
+                </div>
+
+                <div class="result-item winner">
+                    <div class="result-left">
+                        <div class="position-badge position-1">1</div>
+                        <div>
+                            <span style="font-weight: 500;">Andre Rak</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.143</div>
+                        <div class="result-total">00:15:26.449</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-2">2</div>
+                        <div>
+                            <span style="font-weight: 500;">José Rehrig</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:48.964</div>
+                        <div class="result-total">00:15:26.780</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-3">3</div>
+                        <div>
+                            <span style="font-weight: 500;">Tiago Avila</span>
+                            <span class="badge badge-fastest">Melhor Volta</span>
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:48.847</div>
+                        <div class="result-total">00:15:29.970</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">4</div>
+                        <div>
+                            <span style="font-weight: 500;">Jefferson Schlosser</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.194</div>
+                        <div class="result-total">00:15:32.718</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">5</div>
+                        <div>
+                            <span style="font-weight: 500;">Sergio Broeto</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.385</div>
+                        <div class="result-total">00:15:36.647</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">6</div>
+                        <div>
+                            <span style="font-weight: 500;">César Zarate</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.435</div>
+                        <div class="result-total">00:15:37.664</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">7</div>
+                        <div>
+                            <span style="font-weight: 500;">Huan Borges</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:48.908</div>
+                        <div class="result-total">00:15:38.912</div>
+                    </div>
+                </div>
+
+            </div><div class="result-card">
+                <div class="result-title">
+                    <i class="material-icons" style="color: #eab308;">flag</i>
+                    2ª Bateria
+                </div>
+
+                <div class="result-item winner">
+                    <div class="result-left">
+                        <div class="position-badge position-1">1</div>
+                        <div>
+                            <span style="font-weight: 500;">Andre Rak</span>
+                            <span class="badge badge-fastest">Melhor Volta</span><span class="badge badge-record">Recorde do Traçado</span>
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:48.824</div>
+                        <div class="result-total">00:14:54.449</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-2">2</div>
+                        <div>
+                            <span style="font-weight: 500;">José Rehrig</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.097</div>
+                        <div class="result-total">00:15:00.858</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-3">3</div>
+                        <div>
+                            <span style="font-weight: 500;">Sergio Broeto</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:48.881</div>
+                        <div class="result-total">00:15:01.143</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">4</div>
+                        <div>
+                            <span style="font-weight: 500;">Jefferson Schlosser</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.272</div>
+                        <div class="result-total">00:15:04.748</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">5</div>
+                        <div>
+                            <span style="font-weight: 500;">Tiago Avila</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.372</div>
+                        <div class="result-total">00:15:08.268</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">6</div>
+                        <div>
+                            <span style="font-weight: 500;">Huan Borges</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.285</div>
+                        <div class="result-total">00:15:09.614</div>
+                    </div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-left">
+                        <div class="position-badge position-other">7</div>
+                        <div>
+                            <span style="font-weight: 500;">César Zarate</span>
+
+                        </div>
+                    </div>
+                    <div class="result-right">
+                        <div class="result-time">00:49.499</div>
+                        <div class="result-total">00:15:18.755</div>
+                    </div>
+                </div>
+
+            </div></div>
+        </div>
+        <!-- Recordes -->
+        <div id="recordes" class="tab-content">
+            <h2 style="color: #111827; font-weight: 700; margin-bottom: 16px; font-size: 1.8rem;">Recordes e Destaques</h2>
+            <!-- Gerado Dinâmicamente -->
+        </div>
+    </div>
+    <!-- Footer -->
+    <div class="footer">
+        Dashboard atualizado em tempo real • Última atualização: 09/08/2025 14:45:45
+    </div>
+    <script src="assets/js/championship.js"></script>
+    <script src="assets/js/scripts.js"></script>
+</body>
+</html>
