@@ -133,6 +133,48 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         ]
     });
+    championship.addStage({
+        stage: 4,
+        track: "Traçado Completo",
+        date: "2025-09-13",
+        races: [
+            {
+                race: 1,
+                // Tomada de tempo (qualifying)
+                qualifying: [
+                    { position: 1, driver: "André Rak",            time: "00:48.914" },
+                    { position: 2, driver: "Tiago Avila",          time: "00:49.379" },
+                    { position: 3, driver: "Mohamad Jabban",       time: "00:49.570" },
+                    { position: 4, driver: "José Rehrig",          time: "00:49.681" },
+                    { position: 5, driver: "Huan Borges",          time: "00:50.088" },
+                    { position: 6, driver: "Jefferson Schlosser",  time: "00:50.544" }
+                ],
+                // Bateria 1 – tempos = melhor volta (TMV)
+                results: [
+                    { position: 1, driver: "André Rak",            time: "00:48.985" }, // melhor volta da bateria
+                    { position: 2, driver: "Tiago Avila",          time: "00:49.220" },
+                    { position: 3, driver: "Huan Borges",          time: "00:49.705" },
+                    { position: 4, driver: "José Rehrig",          time: "00:49.437" },
+                    { position: 5, driver: "Jefferson Schlosser",  time: "00:49.768" },
+                    { position: 6, driver: "Mohamad Jabban",       time: "00:49.375" }
+                ]
+            },
+            {
+                race: 2,
+                qualifying: [], // não há tomada para a 2ª bateria
+                // Bateria 2 – tempos = melhor volta (TMV)
+                results: [
+                    { position: 1, driver: "Mohamad Jabban",       time: "00:49.179" },
+                    { position: 2, driver: "Tiago Avila",          time: "00:49.153" }, // melhor volta da bateria
+                    { position: 3, driver: "André Rak",            time: "00:49.486" },
+                    { position: 4, driver: "Huan Borges",          time: "00:49.389" },
+                    { position: 5, driver: "Jefferson Schlosser",  time: "00:49.764" },
+                    { position: 6, driver: "José Rehrig",          time: "00:49.738" }
+                ]
+            }
+        ]
+    });
+
 
 // Obter todos os indicadores dinâmicos
     function displayIndicators() {
