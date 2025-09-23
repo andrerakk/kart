@@ -944,14 +944,6 @@ function generateRecordsContent(championship) {
                 Próximas Etapas
             </div>
 
-            <div class="result-item" style="background-color: #fff3e0; border: 1px solid #ffcc80;">
-                <div>
-                    <h4 style="margin: 0; color: #fb8c00; font-weight: 600; font-size: 1.4rem;">Etapa 4 - Fase Especial</h4>
-                    <p style="margin: 4px 0 0 0; color: #fb8c00; font-size: 14px;">AdrenaKart - Traçado a definir</p>
-                </div>
-                <span style="color: #fb8c00; font-size: 14px;">13/09/2025</span>
-            </div>
-
             <div class="result-item" style="background-color: #ede7f6; border: 1px solid #b39ddb;">
                 <div>
                     <h4 style="margin: 0; color: #673ab7 ; font-weight: 600; font-size: 1.4rem;">Etapa 5 - Fase Especial (FINAL)</h4>
