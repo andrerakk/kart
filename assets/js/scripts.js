@@ -174,6 +174,54 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         ]
     });
+    championship.addStage({
+        stage: 5,
+        track: "Traçado Completo",
+        date: "2025-10-04",
+        races: [
+            {
+                race: 1,
+                // Tomada de tempo (qualifying)
+                qualifying: [
+                    { position: 1, driver: "André Rak",          time: "00:49.297" },
+                    { position: 2, driver: "Tiago Avila",        time: "00:49.447" },
+                    { position: 3, driver: "Sergio Broetto",     time: "00:49.635" },
+                    { position: 4, driver: "Thiago Zsigmond",    time: "00:50.027" },
+                    { position: 5, driver: "José Rehrig",        time: "00:50.075" },
+                    { position: 6, driver: "César Zárate",       time: "00:50.380" },
+                    { position: 7, driver: "Edward Melgarejo",   time: "00:50.496" },
+                    { position: 8, driver: "Jefferson Schlosser",time: "00:50.569" }
+                ],
+                // Bateria 1 – tempos = melhor volta (TMV)
+                results: [
+                    { position: 1, driver: "Tiago Avila",        time: "00:49.180" }, // melhor volta da bateria
+                    { position: 2, driver: "André Rak",          time: "00:49.301" },
+                    { position: 3, driver: "Sergio Broetto",     time: "00:49.464" },
+                    { position: 4, driver: "José Rehrig",        time: "00:49.733" },
+                    { position: 5, driver: "Jefferson Schlosser",time: "00:49.989" },
+                    { position: 6, driver: "Thiago Zsigmond",    time: "00:49.615" },
+                    { position: 7, driver: "Edward Melgarejo",   time: "00:50.037" },
+                    { position: 8, driver: "César Zárate",       time: "00:49.876" }
+                ]
+            },
+            {
+                race: 2,
+                qualifying: [], // não há tomada para a 2ª bateria
+                // Bateria 2 – tempos = melhor volta (TMV)
+                results: [
+                    { position: 1, driver: "Tiago Avila",        time: "00:49.160" }, // melhor volta da bateria
+                    { position: 2, driver: "Edward Melgarejo",   time: "00:49.405" },
+                    { position: 3, driver: "Thiago Zsigmond",    time: "00:49.623" },
+                    { position: 4, driver: "José Rehrig",        time: "00:49.661" },
+                    { position: 5, driver: "André Rak",          time: "00:49.576" },
+                    { position: 6, driver: "Jefferson Schlosser",time: "00:50.071" },
+                    { position: 7, driver: "César Zárate",       time: "00:49.916" },
+                    { position: 8, driver: "Sergio Broetto",     time: "00:49.275" }
+                ]
+            }
+        ]
+    });
+
 
 
 // Obter todos os indicadores dinâmicos
