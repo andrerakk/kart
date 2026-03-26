@@ -1,278 +1,386 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Inicializa o sistema
+let currentYearData = null;
+let currentChampionshipInfo = {
+    titulo_campeonato: "",
+    titulo_header: "",
+    proxima_etapa_nome: "",
+    proxima_etapa_tracado: "",
+    proxima_etapa_data: ""
+};
+
+function updateDynamicInfo(info) {
+    const pageTitle = document.getElementById('page-title');
+    if (pageTitle && info.titulo_campeonato) {
+        pageTitle.textContent = info.titulo_campeonato;
+    }
+
+    const headerMainTitle = document.getElementById('header-main-title');
+    if (headerMainTitle && info.titulo_header) {
+        headerMainTitle.textContent = info.titulo_header;
+    }
+
+    // Attempt to update the next stage info directly if it's already rendered
+    const proximasEtapasContainer = document.getElementById('proximas-etapas-container');
+    const nextStageName = document.getElementById('next-stage-name');
+    const nextStageTrack = document.getElementById('next-stage-track');
+    const nextStageDate = document.getElementById('next-stage-date');
+
+    const hasData = info.proxima_etapa_nome && info.proxima_etapa_nome.trim() !== '';
+
+    if (proximasEtapasContainer) {
+        const isFinished = proximasEtapasContainer.getAttribute('data-is-finished') === 'true';
+        if (isFinished || !hasData) {
+            proximasEtapasContainer.style.display = 'none';
+        } else {
+            proximasEtapasContainer.style.display = 'block';
+        }
+    }
+
+    if (nextStageName) nextStageName.textContent = info.proxima_etapa_nome || '';
+    if (nextStageTrack) nextStageTrack.textContent = info.proxima_etapa_tracado || '';
+    if (nextStageDate) nextStageDate.textContent = info.proxima_etapa_data || '';
+}
+
+function loadChampionshipInfo(url) {
+    if (!url) {
+        updateDynamicInfo(currentChampionshipInfo);
+        return;
+    }
+
+    Papa.parse(url, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function (results) {
+            const newInfo = { ...currentChampionshipInfo };
+            results.data.forEach(row => {
+                const key = row['Chave'] ? row['Chave'].trim() : null;
+                const value = row['Valor'] ? row['Valor'].trim() : null;
+                if (key && value) {
+                    newInfo[key] = value;
+                }
+            });
+            currentChampionshipInfo = newInfo;
+            updateDynamicInfo(currentChampionshipInfo);
+        },
+        error: function (err) {
+            console.error('Erro ao carregar informações da aba de configurações:', err);
+            updateDynamicInfo(currentChampionshipInfo);
+        }
+    });
+
+}
+
+function toggleLoading(show) {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) {
+        if (show) {
+            overlay.classList.remove('hidden');
+        } else {
+            // Pequeno delay para a animação ser visível
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+            }, 1000);
+        }
+    }
+}
+
+// Executa quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', () => {
+    const yearSelect = document.getElementById('year-select');
+    const categorySelect = document.getElementById('category-select');
+
+    if (yearSelect && typeof CHAMPIONSHIP_YEARS !== 'undefined') {
+        // Popula o seletor de anos
+        CHAMPIONSHIP_YEARS.forEach(yearObj => {
+            const option = document.createElement('option');
+            option.value = yearObj.year;
+            option.textContent = yearObj.name;
+            option.style.color = '#333';
+            yearSelect.appendChild(option);
+        });
+
+        if (typeof M !== 'undefined' && M.FormSelect) {
+            M.FormSelect.init(yearSelect);
+        }
+
+        yearSelect.addEventListener('change', (e) => {
+            const selectedYear = e.target.value;
+            currentYearData = CHAMPIONSHIP_YEARS.find(y => y.year === selectedYear);
+
+            if (currentYearData && currentYearData.infoCsvUrl) {
+                loadChampionshipInfo(currentYearData.infoCsvUrl);
+            } else {
+                updateDynamicInfo(currentChampionshipInfo);
+            }
+
+            populateCategories(currentYearData.categories);
+        });
+    }
+
+    // Carrega o primeiro ano e suas categorias por padrão antes de inicializar o sistema
+    if (typeof CHAMPIONSHIP_YEARS !== 'undefined' && CHAMPIONSHIP_YEARS.length > 0) {
+        currentYearData = CHAMPIONSHIP_YEARS[0];
+    }
+
+    // Inicializa o sistema padrão
     initializeChampionship();
     initializeCompleteSystem(championship);
 
-    // Exemplo de como adicionar uma etapa completa
-    championship.addStage({
-        stage: 1,
-        track: "Traçado Completo",
-        date: "2025-05-24",
-        races: [
-            {
-                race: 1,
-                // Tomada de tempo (qualifying)
-                qualifying: [
-                    { position: 1, driver: "Tiago Avila",      time: "00:49.685" },
-                    { position: 2, driver: "André Rak",        time: "00:49.800" },
-                    { position: 3, driver: "José Rehrig",      time: "00:49.921" },
-                    { position: 4, driver: "Lucas Pereira",    time: "00:50.145" },
-                    { position: 5, driver: "Mohamad Jabban",   time: "00:50.145" },
-                    { position: 6, driver: "Malio Benitez",    time: "00:50.348" },
-                    { position: 7, driver: "Nestor Correa",    time: "00:51.587" }
-                ],
-                // Bateria 1 – tempos = melhor volta (TMV) da bateria
-                results: [
-                    { position: 1, driver: "José Rehrig",     time: "00:49.798" },
-                    { position: 2, driver: "Lucas Pereira",   time: "00:49.676" },
-                    { position: 3, driver: "André Rak",       time: "00:49.684" },
-                    { position: 4, driver: "Mohamad Jabban",  time: "00:49.612" }, // melhor volta da bateria
-                    { position: 5, driver: "Tiago Avila",     time: "00:49.916" },
-                    { position: 6, driver: "Malio Benitez",   time: "00:50.261" },
-                    { position: 7, driver: "Nestor Correa",   time: "00:50.750" }
-                ]
-            },
-            {
-                race: 2,
-                qualifying: [], // não há tomada para a 2ª bateria
-                // Bateria 2 – tempos = melhor volta (TMV) da bateria
-                results: [
-                    { position: 1, driver: "José Rehrig",     time: "00:49.630" },
-                    { position: 2, driver: "André Rak",       time: "00:49.481" },
-                    { position: 3, driver: "Lucas Pereira",   time: "00:49.387" },
-                    { position: 4, driver: "Mohamad Jabban",  time: "00:49.466" },
-                    { position: 5, driver: "Tiago Avila",     time: "00:49.367" }, // melhor volta da bateria
-                    { position: 6, driver: "Malio Benitez",   time: "00:49.745" },
-                    { position: 7, driver: "Nestor Correa",   time: "00:50.373" }
-                ]
-            }
-        ]
+    // Usa os dados do ano carregado para popular categorias
+    if (currentYearData) {
+        if (currentYearData.infoCsvUrl) {
+            loadChampionshipInfo(currentYearData.infoCsvUrl);
+        } else {
+            updateDynamicInfo(currentChampionshipInfo);
+        }
+        populateCategories(currentYearData.categories);
+    }
+});
+
+function populateCategories(categories) {
+    const categorySelect = document.getElementById('category-select');
+    if (!categorySelect) return;
+
+    // Limpa opções existentes
+    categorySelect.innerHTML = '';
+
+    categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.id;
+        option.textContent = cat.name;
+        option.style.color = '#333';
+        categorySelect.appendChild(option);
     });
-    championship.addStage({
-        stage: 2,
-        track: "Traçado Curto",
-        date: "2025-06-28",
-        races: [
-            {
-                race: 1,
-                // Tomada de tempo (qualifying)
-                qualifying: [
-                    { position: 1, driver: "André Rak",       time: "00:44.112" },
-                    { position: 2, driver: "Mohamad Jabban",  time: "00:44.135" },
-                    { position: 3, driver: "Tiago Avila",     time: "00:44.261" },
-                    { position: 4, driver: "José Rehrig",     time: "00:44.764" },
-                    { position: 5, driver: "Huan Borges",     time: "00:44.864" },
-                    { position: 6, driver: "César Zárate",    time: "00:45.228" }
-                ],
-                // Bateria 1 – tempos = melhor volta (TMV) da bateria
-                results: [
-                    { position: 1, driver: "André Rak",       time: "00:44.155" },
-                    { position: 2, driver: "Mohamad Jabban",  time: "00:44.289" },
-                    { position: 3, driver: "Huan Borges",     time: "00:44.107" }, // melhor volta da bateria
-                    { position: 4, driver: "José Rehrig",     time: "00:44.338" },
-                    { position: 5, driver: "Tiago Avila",     time: "00:44.331" },
-                    { position: 6, driver: "César Zárate",    time: "00:44.470" }
-                ]
-            },
-            {
-                race: 2,
-                qualifying: [], // não há tomada para a 2ª bateria
-                // Bateria 2 – tempos = melhor volta (TMV) da bateria
-                results: [
-                    { position: 1, driver: "Tiago Avila",     time: "00:43.909" }, // melhor volta da bateria
-                    { position: 2, driver: "André Rak",       time: "00:44.151" },
-                    { position: 3, driver: "Huan Borges",     time: "00:44.378" },
-                    { position: 4, driver: "César Zárate",    time: "00:44.639" },
-                    { position: 5, driver: "Mohamad Jabban",  time: "00:44.266" },
-                    { position: 6, driver: "José Rehrig",     time: "00:44.493" }
-                ]
-            }
-        ]
-    });
-    championship.addStage({
-        stage: 3,
-        track: "Traçado Completo",
-        date: "2025-08-09",
-        races: [
-            {
-                race: 1,
-                // Tomada de tempo (qualifying)
-                qualifying: [
-                    { position: 1, driver: "André Rak",          time: "00:48.975" },
-                    { position: 2, driver: "Tiago Avila",        time: "00:49.069" },
-                    { position: 3, driver: "Jefferson Schlosser",time: "00:49.182" },
-                    { position: 4, driver: "Huan Borges",        time: "00:49.208" },
-                    { position: 5, driver: "José Rehrig",        time: "00:49.449" },
-                    { position: 6, driver: "Sergio Broetto",     time: "00:49.535" },
-                    { position: 7, driver: "César Zárate",       time: "00:49.880" }
-                ],
-                // Bateria 1 – tempos = melhor volta (TMV)
-                results: [
-                    { position: 1, driver: "André Rak",           time: "00:49.143" },
-                    { position: 2, driver: "José Rehrig",         time: "00:48.964" },
-                    { position: 3, driver: "Tiago Avila",         time: "00:48.847" }, // melhor volta da bateria
-                    { position: 4, driver: "Jefferson Schlosser", time: "00:49.194" },
-                    { position: 5, driver: "Sergio Broetto",      time: "00:49.385" },
-                    { position: 6, driver: "César Zárate",        time: "00:49.435" },
-                    { position: 7, driver: "Huan Borges",         time: "00:48.908" }
-                ]
-            },
-            {
-                race: 2,
-                qualifying: [], // não há tomada para a 2ª bateria
-                // Bateria 2 – tempos = melhor volta (TMV)
-                results: [
-                    { position: 1, driver: "André Rak",           time: "00:48.824" }, // melhor volta da bateria
-                    { position: 2, driver: "José Rehrig",         time: "00:49.097" },
-                    { position: 3, driver: "Sergio Broetto",      time: "00:48.881" },
-                    { position: 4, driver: "Jefferson Schlosser", time: "00:49.272" },
-                    { position: 5, driver: "Tiago Avila",         time: "00:49.372" },
-                    { position: 6, driver: "Huan Borges",         time: "00:49.285" },
-                    { position: 7, driver: "César Zárate",        time: "00:49.499" }
-                ]
-            }
-        ]
-    });
-    championship.addStage({
-        stage: 4,
-        track: "Traçado Completo",
-        date: "2025-09-13",
-        races: [
-            {
-                race: 1,
-                // Tomada de tempo (qualifying)
-                qualifying: [
-                    { position: 1, driver: "André Rak",            time: "00:48.914" },
-                    { position: 2, driver: "Tiago Avila",          time: "00:49.379" },
-                    { position: 3, driver: "Mohamad Jabban",       time: "00:49.570" },
-                    { position: 4, driver: "José Rehrig",          time: "00:49.681" },
-                    { position: 5, driver: "Huan Borges",          time: "00:50.088" },
-                    { position: 6, driver: "Jefferson Schlosser",  time: "00:50.544" }
-                ],
-                // Bateria 1 – tempos = melhor volta (TMV)
-                results: [
-                    { position: 1, driver: "André Rak",            time: "00:48.985" }, // melhor volta da bateria
-                    { position: 2, driver: "Tiago Avila",          time: "00:49.220" },
-                    { position: 3, driver: "Huan Borges",          time: "00:49.705" },
-                    { position: 4, driver: "José Rehrig",          time: "00:49.437" },
-                    { position: 5, driver: "Jefferson Schlosser",  time: "00:49.768" },
-                    { position: 6, driver: "Mohamad Jabban",       time: "00:49.375" }
-                ]
-            },
-            {
-                race: 2,
-                qualifying: [], // não há tomada para a 2ª bateria
-                // Bateria 2 – tempos = melhor volta (TMV)
-                results: [
-                    { position: 1, driver: "Mohamad Jabban",       time: "00:49.179" },
-                    { position: 2, driver: "Tiago Avila",          time: "00:49.153" }, // melhor volta da bateria
-                    { position: 3, driver: "André Rak",            time: "00:49.486" },
-                    { position: 4, driver: "Huan Borges",          time: "00:49.389" },
-                    { position: 5, driver: "Jefferson Schlosser",  time: "00:49.764" },
-                    { position: 6, driver: "José Rehrig",          time: "00:49.738" }
-                ]
-            }
-        ]
-    });
-    championship.addStage({
-        stage: 5,
-        track: "Traçado Completo",
-        date: "2025-10-04",
-        races: [
-            {
-                race: 1,
-                // Tomada de tempo (qualifying)
-                qualifying: [
-                    { position: 1, driver: "André Rak",          time: "00:49.297" },
-                    { position: 2, driver: "Tiago Avila",        time: "00:49.447" },
-                    { position: 3, driver: "Sergio Broetto",     time: "00:49.635" },
-                    { position: 4, driver: "Thiago Zsigmond",    time: "00:50.027" },
-                    { position: 5, driver: "José Rehrig",        time: "00:50.075" },
-                    { position: 6, driver: "César Zárate",       time: "00:50.380" },
-                    { position: 7, driver: "Edward Melgarejo",   time: "00:50.496" },
-                    { position: 8, driver: "Jefferson Schlosser",time: "00:50.569" }
-                ],
-                // Bateria 1 – tempos = melhor volta (TMV)
-                results: [
-                    { position: 1, driver: "Tiago Avila",        time: "00:49.180" }, // melhor volta da bateria
-                    { position: 2, driver: "André Rak",          time: "00:49.301" },
-                    { position: 3, driver: "Sergio Broetto",     time: "00:49.464" },
-                    { position: 4, driver: "José Rehrig",        time: "00:49.733" },
-                    { position: 5, driver: "Jefferson Schlosser",time: "00:49.989" },
-                    { position: 6, driver: "Thiago Zsigmond",    time: "00:49.615" },
-                    { position: 7, driver: "Edward Melgarejo",   time: "00:50.037" },
-                    { position: 8, driver: "César Zárate",       time: "00:49.876" }
-                ]
-            },
-            {
-                race: 2,
-                qualifying: [], // não há tomada para a 2ª bateria
-                // Bateria 2 – tempos = melhor volta (TMV)
-                results: [
-                    { position: 1, driver: "Tiago Avila",        time: "00:49.160" }, // melhor volta da bateria
-                    { position: 2, driver: "Edward Melgarejo",   time: "00:49.405" },
-                    { position: 3, driver: "Thiago Zsigmond",    time: "00:49.623" },
-                    { position: 4, driver: "José Rehrig",        time: "00:49.661" },
-                    { position: 5, driver: "André Rak",          time: "00:49.576" },
-                    { position: 6, driver: "Jefferson Schlosser",time: "00:50.071" },
-                    { position: 7, driver: "César Zárate",       time: "00:49.916" },
-                    { position: 8, driver: "Sergio Broetto",     time: "00:49.275" }
-                ]
-            }
-        ]
-    });
+
+    if (typeof M !== 'undefined' && M.FormSelect) {
+        // Destruir instância anterior se existir para re-inicializar
+        const instance = M.FormSelect.getInstance(categorySelect);
+        if (instance) {
+            instance.destroy();
+        }
+        M.FormSelect.init(categorySelect);
+    }
+
+    // Remove listener antigo para não acumular (usando clone ou garantindo que só é adicionado uma vez)
+    // A melhor forma aqui é atribuir o onchange diretamente
+    categorySelect.onchange = (e) => {
+        loadCategoryData(e.target.value);
+    };
+
+    // Carrega a primeira categoria do ano selecionado
+    if (categories.length > 0) {
+        loadCategoryData(categories[0].id);
+    } else {
+        // Limpa os dados se não houver categorias
+    }
+}
+
 
 
 
 // Obter todos os indicadores dinâmicos
-    function displayIndicators() {
-        const indicators = championship.getAllIndicators();
+function displayIndicators() {
+    const indicators = championship.getAllIndicators();
 
-        console.log('=== INDICADORES DO CAMPEONATO ===');
-        console.log(`Líder (com descarte): ${indicators.championshipLeader?.name} (${indicators.championshipLeader?.totalPointsWithDiscard} pontos)`);
-        console.log(`Líder (sem descarte): ${indicators.championshipLeaderWithoutDiscard?.name} (${indicators.championshipLeaderWithoutDiscard?.totalPoints} pontos)`);
-        console.log(`Total de pilotos: ${indicators.totalDrivers}`);
-        console.log(`Progresso: ${indicators.stagesProgress}`);
+    console.log('=== INDICADORES DO CAMPEONATO ===');
+    console.log(`Líder (com descarte): ${indicators.championshipLeader?.name} (${indicators.championshipLeader?.totalPointsWithDiscard} pontos)`);
+    console.log(`Líder (sem descarte): ${indicators.championshipLeaderWithoutDiscard?.name} (${indicators.championshipLeaderWithoutDiscard?.totalPoints} pontos)`);
+    console.log(`Total de pilotos: ${indicators.totalDrivers}`);
+    console.log(`Progresso: ${indicators.stagesProgress}`);
 
-        console.log('\n=== RECORDES DE PISTA ===');
-        indicators.trackRecords.forEach(record => {
-            console.log(`${record.track}: ${record.driver} - ${record.time} (Etapa ${record.stage}, Bateria ${record.race})`);
-        });
+    console.log('\n=== RECORDES DE PISTA ===');
+    indicators.trackRecords.forEach(record => {
+        console.log(`${record.track}: ${record.driver} - ${record.time} (Etapa ${record.stage}, Bateria ${record.race})`);
+    });
 
-        console.log(`\n=== LÍDERES ===`);
-        console.log(`Mais vitórias: ${indicators.mostVictories?.name} (${indicators.mostVictories?.victories})`);
-        console.log(`Mais poles: ${indicators.mostPoles?.name} (${indicators.mostPoles?.poles})`);
-        console.log(`Mais voltas rápidas: ${indicators.mostFastestLaps?.name} (${indicators.mostFastestLaps?.fastestLaps})`);
+    console.log(`\n=== LÍDERES ===`);
+    console.log(`Mais vitórias: ${indicators.mostVictories?.name} (${indicators.mostVictories?.victories})`);
+    console.log(`Mais poles: ${indicators.mostPoles?.name} (${indicators.mostPoles?.poles})`);
+    console.log(`Mais voltas rápidas: ${indicators.mostFastestLaps?.name} (${indicators.mostFastestLaps?.fastestLaps})`);
 
-        console.log('\n=== CLASSIFICAÇÃO FINAL (COM DESCARTE) ===');
-        indicators.finalStandings.forEach((driver, index) => {
-            console.log(`${index + 1}º - ${driver.name}`);
-            console.log(`   Baterias: ${driver.racesParticipated} | Etapas: ${driver.stagesParticipated.length}`);
-            console.log(`   Vitórias: ${driver.victories} | Poles: ${driver.poles} | V.Rápidas: ${driver.fastestLaps}`);
-            console.log(`   Pontos: ${driver.totalPoints} | Com descarte: ${driver.totalPointsWithDiscard}`);
-            console.log(`   Baterias perdidas: ${driver.missedRaces} | Descartes efetivos: ${driver.effectiveDiscardCount}`);
-            console.log('');
-        });
+    console.log('\n=== CLASSIFICAÇÃO FINAL (COM DESCARTE) ===');
+    indicators.finalStandings.forEach((driver, index) => {
+        console.log(`${index + 1}º - ${driver.name}`);
+        console.log(`   Baterias: ${driver.racesParticipated} | Etapas: ${driver.stagesParticipated.length}`);
+        console.log(`   Vitórias: ${driver.victories} | Poles: ${driver.poles} | V.Rápidas: ${driver.fastestLaps}`);
+        console.log(`   Pontos: ${driver.totalPoints} | Com descarte: ${driver.totalPointsWithDiscard}`);
+        console.log(`   Baterias perdidas: ${driver.missedRaces} | Descartes efetivos: ${driver.effectiveDiscardCount}`);
+        console.log('');
+    });
 
-        console.log('\n=== CLASSIFICAÇÃO SEM DESCARTE ===');
-        indicators.finalStandingsWithoutDiscard.forEach((driver, index) => {
-            console.log(`${index + 1}º - ${driver.name} - ${driver.totalPoints} pontos`);
-        });
-    }
+    console.log('\n=== CLASSIFICAÇÃO SEM DESCARTE ===');
+    indicators.finalStandingsWithoutDiscard.forEach((driver, index) => {
+        console.log(`${index + 1}º - ${driver.name} - ${driver.totalPoints} pontos`);
+    });
+}
 
 // Executar exemplo
-    displayIndicators();
+// displayIndicators();
 
-});
-// Variável global para o campeonato (você pode ajustar conforme sua estrutura)
 let championship;
+
+// Função para formatar os dados parciais lidos do CSV na estrutura suportada pela classe KartChampionship
+function parseCSVDataToStages(csvData) {
+    const stagesMap = new Map();
+
+    csvData.forEach(row => {
+        // Normaliza nomes das colunas para lidar com acentos do Google Sheets
+        const etapa = row.Etapa;
+        const sessao = row.Sessao || row['Sessão'];
+        const piloto = row.Piloto;
+        const posicao = row.Posicao || row['Posição'];
+        const track = row.Track || row['Traçado'];
+        const data = row.Data;
+
+        // Pula linhas incompletas
+        if (!etapa || !sessao || !piloto) return;
+
+        const stageId = parseInt(etapa);
+        const sType = sessao.toUpperCase(); // 'Q' para qualifying, '1', '2' para baterias
+        const raceNumber = (sType === 'Q') ? 1 : parseInt(sType);
+
+        if (!stagesMap.has(stageId)) {
+            stagesMap.set(stageId, {
+                stage: stageId,
+                track: track || `Traçado ${stageId}`,
+                date: data || `Etapa ${stageId}`,
+                racesMap: new Map() // Para organizar races temporariamente
+            });
+        }
+
+        const stageObj = stagesMap.get(stageId);
+
+        if (!stageObj.racesMap.has(raceNumber)) {
+            stageObj.racesMap.set(raceNumber, {
+                race: raceNumber,
+                qualifying: [],
+                results: []
+            });
+        }
+        const raceObj = stageObj.racesMap.get(raceNumber);
+
+        const resultEntry = {
+            position: parseInt(posicao) || 0,
+            driver: piloto,
+            time: row.Tempo
+        };
+
+        if (sType === 'Q') {
+            raceObj.qualifying.push(resultEntry);
+        } else {
+            raceObj.results.push(resultEntry);
+        }
+    });
+
+    // Converte os Maps de volta para arrays ordendados esperados pelo sistema
+    const stagesArray = Array.from(stagesMap.values()).map(s => {
+        const racesArray = Array.from(s.racesMap.values()).sort((a, b) => a.race - b.race);
+        s.races = racesArray;
+        delete s.racesMap; // limpa a propriedade temporária
+
+        // Ordena os arrays de qualifying e results por posição
+        s.races.forEach(r => {
+            r.qualifying.sort((a, b) => a.position - b.position);
+            r.results.sort((a, b) => a.position - b.position);
+        });
+
+        return s;
+    }).sort((a, b) => a.stage - b.stage);
+
+    return stagesArray;
+}
+
+// Função para buscar os dados de uma categoria e atualizar o campeonato
+function loadCategoryData(categoryId) {
+    if (!currentYearData) return;
+    const category = currentYearData.categories.find(c => c.id === categoryId);
+    if (!category) return;
+
+    // Mostra feedback de carregamento
+    toggleLoading(true);
+    const headerTitleElement = document.querySelector('.header-title p');
+    if (headerTitleElement) {
+        headerTitleElement.innerHTML = `Carregando dados para: ${category.name}...`;
+    }
+
+    Papa.parse(category.csvUrl, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function (results) {
+            console.log('Dados recebidos via PapaParse:', results.data);
+
+            // Re-inicializa o objeto do campeonato para apagar dados anteriores
+            const stages = currentYearData && currentYearData.totalStages ? currentYearData.totalStages : 5;
+            const specialStages = currentYearData && currentYearData.specialStages ? currentYearData.specialStages : undefined;
+            const configOptions = { totalStages: stages };
+            if (specialStages) configOptions.specialPhaseStages = specialStages;
+            championship = new KartChampionship(configOptions);
+            // Adiciona de volta os listeners da lógica original
+            initializeStagesProgressSystem(championship);
+            initializeTabsSystem(championship);
+            initializeStageContentSystem(championship);
+
+            const stagesData = parseCSVDataToStages(results.data);
+
+            // Remove abas que poderiam ser remanescentes de etapas antigas (limpa DOM)
+            const rootTabsContainer = document.querySelector('#geral').parentNode;
+            const extraTabs = rootTabsContainer.querySelectorAll('.tab-content');
+            extraTabs.forEach(tab => {
+                if (tab.id !== 'geral' && tab.id !== 'recordes') {
+                    tab.remove();
+                }
+            });
+            const oldResultsLists = document.querySelectorAll('.results-grid');
+            oldResultsLists.forEach(grid => {
+                if (grid.id !== 'classification-list' && !grid.classList.contains('records-grid')) {
+                    grid.innerHTML = ''; //Limpa grids de etapas anteriores
+                }
+            })
+
+            // Injeta as novas etapas e atualiza a interface
+            stagesData.forEach(stageData => {
+                championship.addStage(stageData);
+            });
+
+            // Ativa o toggle de descartes por padrão se o campeonato acabou
+            const switchElement = document.querySelector('.switch input[type="checkbox"]');
+            if (switchElement) {
+                const isChampionshipFinished = championship.stages.length >= (championship.config.totalStages || 5);
+                switchElement.checked = isChampionshipFinished;
+            }
+
+            // Após carregar, volta para as guias principais
+            showTab('geral');
+
+            updateStatsCardsAndClassification(championship);
+            updateRecordsTab(championship);
+
+            if (headerTitleElement) {
+                headerTitleElement.innerHTML = `Dashboard do Campeonato - ${category.name}`;
+            }
+            toggleLoading(false);
+        },
+        error: function (err) {
+            console.error('Erro ao baixar o CSV da categoria:', err);
+            if (headerTitleElement) {
+                headerTitleElement.innerHTML = `Erro ao carregar dados de ${category.name}`;
+            }
+            toggleLoading(false);
+        }
+    });
+
+}
+
 
 // Função de inicialização - CHAME ESTA QUANDO SUA PÁGINA CARREGAR
 function initializeChampionship() {
     // Cria o campeonato
-    championship = new KartChampionship({
-        totalStages: 5 // Ajuste conforme seu campeonato
-    });
+    const stages = currentYearData && currentYearData.totalStages ? currentYearData.totalStages : 5;
+    const specialStages = currentYearData && currentYearData.specialStages ? currentYearData.specialStages : undefined;
+    const configOptions = { totalStages: stages };
+    if (specialStages) configOptions.specialPhaseStages = specialStages;
+    championship = new KartChampionship(configOptions);
 
     // Inicializa o sistema automático de progresso
     initializeStagesProgressSystem(championship);
@@ -370,7 +478,7 @@ function initializeStagesProgressSystem(championship) {
     const originalAddStage = championship.addStage.bind(championship);
 
     // Substitui o método addStage por uma versão que atualiza o progresso
-    championship.addStage = function(stageData) {
+    championship.addStage = function (stageData) {
 
         // Chama o método original para adicionar a etapa
         originalAddStage(stageData);
@@ -401,9 +509,16 @@ function updateStatsCardsAndClassification(championship) {
 
     // Stats cards - Líder sincronizado com o switch
     const leaderElement = document.getElementById('leader-name');
+    const leaderLabel = document.getElementById('leader-label');
+
     if (leaderElement) {
         const leader = useDiscard ? indicators.championshipLeader : indicators.championshipLeaderWithoutDiscard;
         leaderElement.textContent = leader ? leader.name : 'Nenhum líder';
+    }
+
+    if (leaderLabel) {
+        const isChampionshipFinished = championship.stages.length >= (championship.config.totalStages || 5);
+        leaderLabel.textContent = isChampionshipFinished ? 'Campeão' : 'Líder';
     }
 
     const driversElement = document.getElementById('total-drivers');
@@ -494,35 +609,19 @@ function updateClassification(championship) {
     }
 }
 
-// Adiciona o listener para o switch
-function initializeClassificationSwitch(championship) {
+// Adiciona o listener para o switch usando a variável global
+function initializeClassificationSwitch() {
     const switchElement = document.querySelector('.switch input[type="checkbox"]');
 
     if (switchElement) {
-        switchElement.addEventListener('change', function() {
-            // Atualiza tanto a classificação quanto o líder no stats card
-            updateStatsCardsAndClassification(championship);
+        switchElement.addEventListener('change', function () {
+            if (typeof championship !== 'undefined' && championship) {
+                // Atualiza classificação e líder no stats card
+                updateStatsCardsAndClassification(championship);
+                updateLeaderBasedOnSwitch(championship);
+            }
         });
     }
-
-    // Atualização inicial
-    updateStatsCardsAndClassification(championship);
-}
-
-// Adiciona o listener para o switch
-function initializeClassificationSwitch(championship) {
-    const switchElement = document.querySelector('.switch input[type="checkbox"]');
-
-    if (switchElement) {
-        switchElement.addEventListener('change', function() {
-            updateClassification(championship);
-            updateLeaderBasedOnSwitch(championship);
-        });
-    }
-
-    // Atualização inicial
-    updateClassification(championship);
-    updateLeaderBasedOnSwitch(championship);
 }
 
 // Função para atualizar só o líder baseado no switch
@@ -532,12 +631,19 @@ function updateLeaderBasedOnSwitch(championship) {
     const useDiscard = switchElement ? switchElement.checked : false;
 
     const leaderElement = document.getElementById('leader-name');
+    const leaderLabel = document.getElementById('leader-label');
+
     if (leaderElement) {
         const leader = useDiscard ?
             indicators.championshipLeader :          // COM descarte
             indicators.championshipLeaderWithoutDiscard; // SEM descarte
 
         leaderElement.textContent = leader ? leader.name : 'Nenhum líder';
+    }
+
+    if (leaderLabel) {
+        const isChampionshipFinished = championship.stages.length >= (championship.config.totalStages || 5);
+        leaderLabel.textContent = isChampionshipFinished ? 'Campeão' : 'Líder';
     }
 }
 
@@ -594,8 +700,16 @@ function showTab(tabName) {
         selectedTab.classList.add('active');
     }
 
-    // Add active class to clicked button
-    event.target.classList.add('active');
+    // Add active class to clicked button if called via click event
+    if (typeof event !== 'undefined' && event && event.target && event.target.classList) {
+        event.target.classList.add('active');
+    } else {
+        // Se chamado programaticamente, tenta achar o botão correspondente
+        const btn = Array.from(document.querySelectorAll('.tab-button')).find(
+            b => b.getAttribute('onclick') === `showTab('${tabName}')`
+        );
+        if (btn) btn.classList.add('active');
+    }
 
     // Render content based on tab
     if (tabName === 'geral') {
@@ -621,7 +735,7 @@ function initializeTabsSystem(championship) {
     // Intercepta o addStage para gerar tabs automaticamente
     const originalAddStage = championship.addStage.bind(championship);
 
-    championship.addStage = function(stageData) {
+    championship.addStage = function (stageData) {
         originalAddStage(stageData);
 
         // Regenera as tabs
@@ -801,7 +915,7 @@ function createStageTabContent(championship, stageNumber) {
 function initializeStageContentSystem(championship) {
     const originalAddStage = championship.addStage.bind(championship);
 
-    championship.addStage = function(stageData) {
+    championship.addStage = function (stageData) {
         originalAddStage(stageData);
 
         // Cria o conteúdo da tab automaticamente
@@ -817,17 +931,17 @@ function initializeStageContentSystem(championship) {
 
 // Função para criar um card de recorde
 function createRecordCard(title, value, driver, detail, icon, color, backgroundStyle = '') {
-    const style = backgroundStyle || `background: linear-gradient(135deg, #fef7ff, #fae8ff); border-color: #e879f9;`;
+    const style = backgroundStyle || `border-top: 4px solid ${color};`;
 
     return `
-        <div class="record-card fastest-lap" style="${style}">
+        <div class="record-card" style="${style}">
             <div class="record-header">
                 <i class="material-icons" style="color: ${color};">${icon}</i>
                 <span class="record-title" style="color: ${color};">${title}</span>
             </div>
             <div class="record-value" style="color: ${color};">${value}</div>
             <p class="record-driver" style="color: ${color};">${driver}</p>
-            <p class="record-detail" style="color: ${color};">${detail}</p>
+            <p class="record-detail" style="color: #94a3b8;">${detail}</p>
         </div>
     `;
 }
@@ -836,10 +950,10 @@ function createRecordCard(title, value, driver, detail, icon, color, backgroundS
 function generateTrackRecords(trackRecords) {
     let recordsHtml = '';
     const colors = [
-        { bg: 'background: linear-gradient(135deg, #fef2f2, #fee2e2); border-color: #fca5a5;', color: '#dc2626' },
-        { bg: 'background: linear-gradient(135deg, #f0f9ff, #dbeafe); border-color: #93c5fd;', color: '#1976d2' },
-        { bg: 'background: linear-gradient(135deg, #fefce8, #fef3c7); border-color: #fcd34d;', color: '#d97706' },
-        { bg: 'background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: #86efac;', color: '#059669' }
+        { bg: 'border-top: 4px solid #ef4444;', color: '#ef4444' },
+        { bg: 'border-top: 4px solid #3b82f6;', color: '#3b82f6' },
+        { bg: 'border-top: 4px solid #eab308;', color: '#eab308' },
+        { bg: 'border-top: 4px solid #10b981;', color: '#10b981' }
     ];
 
     trackRecords.forEach((record, index) => {
@@ -870,7 +984,9 @@ function generateChampionshipSituation(championship) {
 
     if (standings.length < 2) {
         return `
-            <li><strong>Campeonato iniciando</strong> - Aguardando mais etapas para análise</li>
+            <div class="result-item" style="border-left: 4px solid #3b82f6; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px;">
+                <p style="margin: 0; color: #93c5fd; font-size: 15px;"><strong>Campeonato iniciando</strong> - Aguardando mais etapas para análise</p>
+            </div>
         `;
     }
 
@@ -895,29 +1011,31 @@ function generateChampionshipSituation(championship) {
     }
 
     let situationHtml = `
-        <li><strong>${leader.name} lidera</strong> com ${pointsDiffNoDiscard} pontos de vantagem`;
+            <div class="result-item" style="border-left: 4px solid #3b82f6; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px;">
+                <p style="margin: 0; color: #93c5fd; font-size: 15px;"><strong>${leader.name} lidera</strong> com ${pointsDiffNoDiscard} pontos de vantagem`;
 
     if (pointsDiff !== pointsDiffNoDiscard) {
         situationHtml += `, mas, considerando os descartes essa diferença ${pointsDiffNoDiscard < pointsDiff ? 'aumenta para' : 'diminui para'} ${pointsDiff} pontos`;
     }
-    situationHtml += '</li>';
+    situationHtml += '</p>';
 
     if (remainingStages > 0) {
         situationHtml += `
-            <li><strong>${remainingStages} etapa${remainingStages > 1 ? 's' : ''} restante${remainingStages > 1 ? 's' : ''}</strong> com aproximadamente ${pointsRemaining} pontos ainda em disputa</li>
+                <p style="margin: 0; color: #93c5fd; font-size: 15px;"><strong>${remainingStages} etapa${remainingStages > 1 ? 's' : ''} restante${remainingStages > 1 ? 's' : ''}</strong> com aproximadamente ${pointsRemaining} pontos ainda em disputa</p>
         `;
 
         if (specialStagesRemaining > 0) {
             situationHtml += `
-                <li><strong>Fases especiais</strong> podem mudar tudo (${specialStagesRemaining} etapa${specialStagesRemaining > 1 ? 's' : ''} com pontuação extra)</li>
+                <p style="margin: 0; color: #93c5fd; font-size: 15px;"><strong>Fases especiais</strong> podem mudar tudo (${specialStagesRemaining} etapa${specialStagesRemaining > 1 ? 's' : ''} com pontuação extra)</p>
             `;
         }
     } else {
         situationHtml += `
-            <li><strong>Campeonato finalizado!</strong> ${leader.name} é o campeão com ${leader.totalPointsWithDiscard} pontos</li>
+                <p style="margin: 0; color: #93c5fd; font-size: 15px;"><strong>Campeonato finalizado!</strong> ${leader.name} é o campeão com ${leader.totalPointsWithDiscard} pontos</p>
         `;
     }
 
+    situationHtml += `</div>`;
     return situationHtml;
 }
 
@@ -936,7 +1054,7 @@ function generateRecordsContent(championship) {
     const victoriousCard = createRecordCard(
         'Mais Vitórias',
         mostVictories?.victories || 0,
-        mostVictories?.name  || 'Nenhum',
+        mostVictories?.name || 'Nenhum',
         'Especialista em ganhar',
         'emoji_events',
         '#d97706'
@@ -957,12 +1075,42 @@ function generateRecordsContent(championship) {
         mostFastestLaps?.name || 'Nenhum',
         'Especialista em velocidade',
         'flash_on',
-        '#059669',
-        'background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: #86efac;'
+        '#10b981',
+        'border-top: 4px solid #10b981;'
     );
 
     // Situação do campeonato
     const championshipSituationHtml = generateChampionshipSituation(championship);
+
+    // Verifica se precisa renderizar Próximas Etapas
+    const currentStages = championship.stages.length;
+    const remainingStages = championship.config.totalStages - currentStages;
+    const isFinished = remainingStages <= 0;
+
+    const nextStageName = currentChampionshipInfo.proxima_etapa_nome;
+    const hasNextStageInfo = nextStageName && nextStageName.trim() !== '';
+    const proximasEtapasDisplay = (isFinished || !hasNextStageInfo) ? 'none' : 'block';
+
+    const proximasEtapasHtml = `
+        <div id="proximas-etapas-container" data-is-finished="${isFinished}" style="display: ${proximasEtapasDisplay};">
+            <br>
+            <!-- Próximas Etapas -->
+            <div class="result-card">
+                <div class="result-title">
+                    <i class="material-icons" style="color: #8b5cf6;">event</i>
+                    Próximas Etapas
+                </div>
+
+                <div class="result-item" style="border-left: 4px solid #8b5cf6;">
+                    <div>
+                        <h4 id="next-stage-name" style="margin: 0; color: #c4b5fd; font-weight: 600; font-size: 1.4rem;">${nextStageName || ''}</h4>
+                        <p id="next-stage-track" style="margin: 4px 0 0 0; color: #a78bfa; font-size: 14px;">${currentChampionshipInfo.proxima_etapa_tracado || ''}</p>
+                    </div>
+                    <span id="next-stage-date" style="color: #a78bfa; font-size: 14px;">${currentChampionshipInfo.proxima_etapa_data || ''}</span>
+                </div>
+            </div>
+        </div>
+    `;
 
     return `
         <h2 style="color: #111827; font-weight: 700; margin-bottom: 16px; font-size: 1.8rem;">Recordes e Destaques</h2>
@@ -975,31 +1123,14 @@ function generateRecordsContent(championship) {
         </div>
         
         <!-- Situação do Campeonato -->
-        <div class="result-card" style="background-color: #eff6ff; border: 1px solid #60a5fa;">
-            <div class="result-title">
-                <i class="material-icons" style="color: #1976d2;">insights</i>
-                Situação do Campeonato
-            </div>
-            <ul style="color: #1976d2; line-height: 1.6;">
-                ${championshipSituationHtml}
-            </ul>
-        </div>
-        <br>
-          <!-- Próximas Etapas -->
         <div class="result-card">
             <div class="result-title">
-                <i class="material-icons" style="color: #1976d2;">event</i>
-                Próximas Etapas
+                <i class="material-icons" style="color: #3b82f6;">insights</i>
+                Situação do Campeonato
             </div>
-
-            <div class="result-item" style="background-color: #ede7f6; border: 1px solid #b39ddb;">
-                <div>
-                    <h4 style="margin: 0; color: #673ab7 ; font-weight: 600; font-size: 1.4rem;">Etapa 5 - Fase Especial (FINAL)</h4>
-                    <p style="margin: 4px 0 0 0; color: #673ab7 ; font-size: 14px;">AdrenaKart - Traçado a definir</p>
-                </div>
-                <span style="color: #673ab7 ; font-size: 14px;">04/10/2025</span>
-            </div>
+            ${championshipSituationHtml}
         </div>
+        ${proximasEtapasHtml}
     `;
 
 }
@@ -1039,7 +1170,7 @@ function generateClassificationText(championship) {
     });
 
     text += `${'='.repeat(50)}\n`;
-    text += `🏎️ Troféu Cataratas de Kart Rental 2025\n`;
+    text += `🏎️ ${currentChampionshipInfo.titulo_campeonato || "Troféu Cataratas de Kart Rental"}\n`;
 
     return text;
 }
@@ -1095,76 +1226,66 @@ function generateClassificationHTML(championship) {
     const progress = indicators.stagesProgress;
 
     let html = `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background: white;">
-            <div style="text-align: center; margin-bottom: 30px;">
-                <h2 style="color: #111827; margin: 0 0 8px 0; font-size: 1.8rem; font-weight: 700;">Classificação Geral do Campeonato</h2>
-                <p style="color: #6b7280; margin: 0; font-size: 14px;">${discardText} • Atualização: ${currentDate} • Progresso: ${progress}</p>
+        <div style="font-family: 'Montserrat', sans-serif; width: 1080px; min-height: 1920px; margin: 0; padding: 60px 50px; background-color: #121215; background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.03) 50%, rgba(255, 255, 255, 0.03) 75%, transparent 75%, transparent 100%); background-size: 60px 60px; box-sizing: border-box; display: flex; flex-direction: column; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+            
+            <div style="text-align: center; margin-bottom: 50px; padding-bottom: 30px; border-bottom: 4px solid #ef4444;">
+                <h2 style="color: #f8fafc; margin: 0 0 10px 0; font-size: 3.5rem; font-family: 'Racing Sans One', sans-serif; text-transform: uppercase; text-shadow: 2px 2px 0px rgba(0,0,0,0.8);">Classificação Geral</h2>
+                <h3 style="color: #ef4444; margin: 0 0 16px 0; font-size: 2rem; font-family: 'Racing Sans One', sans-serif; text-transform: uppercase;">${currentChampionshipInfo.titulo_header || "Troféu Cataratas de Kart"}</h3>
+                <p style="color: #94a3b8; margin: 0; font-size: 1.4rem; font-weight: 700; text-transform: uppercase;">${discardText} • Atualização: ${currentDate} • Progresso: ${progress}</p>
             </div>
             
-            <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; flex-direction: column; gap: 20px; flex-grow: 1;">
     `;
 
     standings.forEach((driver, index) => {
         const position = index + 1;
         const points = useDiscard ? driver.totalPointsWithDiscard : driver.totalPoints;
 
-        // Estilo igual aos cards da classificação
-        let cardClass = '';
-        let positionClass = '';
-        let gradient = '';
+        let cardStyle = '';
+        let badgeStyle = '';
 
         if (position === 1) {
-            cardClass = 'leader';
-            positionClass = 'position-1';
-            gradient = 'background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);';
+            cardStyle = 'background: linear-gradient(to right, #3f2e04, #1e1e24); border-left: 8px solid #eab308; border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;';
+            badgeStyle = 'background: #eab308; color: #000;';
         } else if (position === 2) {
-            positionClass = 'position-2';
-            gradient = 'background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);';
+            cardStyle = 'background: #1e1e24; border-left: 8px solid #94a3b8; border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;';
+            badgeStyle = 'background: #94a3b8; color: #000;';
         } else if (position === 3) {
-            positionClass = 'position-3';
-            gradient = 'background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);';
+            cardStyle = 'background: #1e1e24; border-left: 8px solid #b45309; border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;';
+            badgeStyle = 'background: #fff; color: #b45309;';
         } else {
-            positionClass = 'position-other';
-            gradient = 'background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);';
+            cardStyle = 'background: #1e1e24; border-left: 8px solid #ef4444; border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;';
+            badgeStyle = 'background: #334155; color: #f8fafc;';
         }
 
-        const boxShadow = position === 1 ? 'box-shadow: 0 4px 20px rgba(245, 158, 11, 0.15);' : 'box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);';
-        const border = position === 1 ? 'border: 2px solid #f59e0b;' : 'border: 1px solid #e5e7eb;';
-
         html += `
-            <div style="${gradient} ${border} ${boxShadow} border-radius: 12px; padding: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                    <div style="display: flex; align-items: center; gap: 16px;">
-                        <div style="width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; background: white; color: #111827; border: 2px solid #e5e7eb;">
-                            ${position}º
+            <div class="driver-card" style="${cardStyle} border-radius: 12px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 24px;">
+                        <div style="width: 70px; height: 70px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 32px; font-family: 'Racing Sans One', sans-serif; transform: skewX(-10deg); box-shadow: 3px 3px 0px rgba(0,0,0,0.5); ${badgeStyle}">
+                            <div style="transform: skewX(10deg);">${position}º</div>
                         </div>
                         <div>
-                            <h3 style="margin: 0 0 4px 0; color: #111827; font-weight: 600; font-size: 20px;">${driver.name}</h3>
-                            <p style="margin: 0; color: #6b7280; font-size: 14px;">${driver.racesParticipated} baterias completas</p>
+                            <h3 style="margin: 0 0 8px 0; color: #f8fafc; font-weight: 800; font-size: 30px; text-transform: uppercase; font-style: italic; letter-spacing: 1px;">${driver.name}</h3>
+                            <div style="display: flex; gap: 20px;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="color: #94a3b8; font-size: 16px; font-weight: 700; text-transform: uppercase;">VITÓRIAS</span>
+                                    <span style="color: #34d399; font-size: 20px; font-family: 'Racing Sans One', sans-serif;">${driver.victories}</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="color: #94a3b8; font-size: 16px; font-weight: 700; text-transform: uppercase;">POLES</span>
+                                    <span style="color: #a78bfa; font-size: 20px; font-family: 'Racing Sans One', sans-serif;">${driver.poles}</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span style="color: #94a3b8; font-size: 16px; font-weight: 700; text-transform: uppercase;">V. RÁPIDAS</span>
+                                    <span style="color: #f87171; font-size: 20px; font-family: 'Racing Sans One', sans-serif;">${driver.fastestLaps}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div style="text-align: right;">
-                        <h2 style="margin: 0 0 4px 0; color: #111827; font-weight: 700; font-size: 32px;">${points}</h2>
-                        <p style="margin: 0; color: #6b7280; font-size: 14px;">pontos</p>
-                    </div>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
-                    <div style="text-align: center; padding: 12px; background: rgba(255, 255, 255, 0.8); border-radius: 8px;">
-                        <p style="margin: 0 0 4px 0; color: #dc2626; font-weight: 700; font-size: 20px;">${driver.victories}</p>
-                        <p style="margin: 0; color: #6b7280; font-size: 12px;">Vitórias</p>
-                    </div>
-                    <div style="text-align: center; padding: 12px; background: rgba(255, 255, 255, 0.8); border-radius: 8px;">
-                        <p style="margin: 0 0 4px 0; color: #2563eb; font-weight: 700; font-size: 20px;">${driver.poles}</p>
-                        <p style="margin: 0; color: #6b7280; font-size: 12px;">Poles</p>
-                    </div>
-                    <div style="text-align: center; padding: 12px; background: rgba(255, 255, 255, 0.8); border-radius: 8px;">
-                        <p style="margin: 0 0 4px 0; color: #7c3aed; font-weight: 700; font-size: 20px;">${driver.fastestLaps}</p>
-                        <p style="margin: 0; color: #6b7280; font-size: 12px;">V. Rápidas</p>
-                    </div>
-                    <div style="text-align: center; padding: 12px; background: rgba(255, 255, 255, 0.8); border-radius: 8px;">
-                        <p style="margin: 0 0 4px 0; color: #059669; font-weight: 700; font-size: 20px;">${driver.stagesParticipated.length}</p>
-                        <p style="margin: 0; color: #6b7280; font-size: 12px;">Etapas</p>
+                        <h2 style="margin: 0 0 4px 0; color: #eab308; font-weight: 400; font-size: 56px; font-family: 'Racing Sans One', sans-serif; text-shadow: 3px 3px 0px rgba(0,0,0,0.6);">${points}</h2>
+                        <p style="margin: 0; color: #94a3b8; font-size: 18px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">pontos</p>
                     </div>
                 </div>
             </div>
@@ -1174,8 +1295,9 @@ function generateClassificationHTML(championship) {
     html += `
             </div>
             
-            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                <p style="color: #6b7280; font-size: 12px; margin: 0;">Troféu Cataratas de Kart Rental 2025</p>
+            <div style="text-align: center; margin-top: 50px; padding-top: 40px; border-top: 2px solid #333;">
+                <p style="color: #f8fafc; font-size: 1.8rem; font-weight: 400; font-family: 'Racing Sans One', sans-serif; text-transform: uppercase; margin: 0 0 10px 0;">${currentChampionshipInfo.titulo_campeonato || "3º Troféu Cataratas de Kart Rental 2025"}</p>
+                <p style="color: #64748b; font-size: 1.2rem; font-weight: 600; text-transform: uppercase; margin: 0;">Acelere conosco nas próximas etapas!</p>
             </div>
         </div>
     `;
@@ -1205,11 +1327,11 @@ async function exportClassificationAsImage(championship) {
 
         // Usa html2canvas para converter em imagem
         const canvas = await html2canvas(tempDiv.firstElementChild, {
-            backgroundColor: '#ffffff',
+            backgroundColor: '#121215',
             scale: 2, // Para melhor qualidade
             useCORS: true,
             allowTaint: true,
-            width: 900,
+            width: 1080,
             height: tempDiv.firstElementChild.offsetHeight
         });
 
@@ -1217,7 +1339,7 @@ async function exportClassificationAsImage(championship) {
         document.body.removeChild(tempDiv);
 
         // Converte canvas para blob e baixa
-        canvas.toBlob(function(blob) {
+        canvas.toBlob(function (blob) {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
@@ -1236,9 +1358,82 @@ async function exportClassificationAsImage(championship) {
     }
 }
 
+// Função para gerar HTML em formato Tabela A4 para PDF
+function generatePrintClassificationHTML(championship) {
+    const indicators = championship.getAllIndicators();
+    const switchElement = document.querySelector('.switch input[type="checkbox"]');
+    const useDiscard = switchElement ? switchElement.checked : false;
+
+    const standings = useDiscard ? indicators.finalStandings : indicators.finalStandingsWithoutDiscard;
+    const discardText = useDiscard ? ' (com descarte)' : ' (sem descarte)';
+    const currentDate = new Date().toLocaleDateString('pt-BR');
+    const progress = indicators.stagesProgress;
+
+    let html = `
+        <div style="font-family: 'Montserrat', sans-serif; max-width: 100%; margin: 0 auto; padding: 20px; background: white; color: #111;">
+            
+            <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #ef4444; padding-bottom: 15px;">
+                <h2 style="margin: 0 0 5px 0; font-size: 28px; font-family: 'Racing Sans One', sans-serif; text-transform: uppercase; color: #111;">Classificação Geral - ${currentChampionshipInfo.titulo_header || "Troféu Cataratas de Kart"}</h2>
+                <p style="margin: 0; font-size: 14px; color: #555;">${discardText} • Atualização: ${currentDate} • Progresso: ${progress}</p>
+            </div>
+            
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px;">
+                <thead>
+                    <tr style="background-color: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+                        <th style="padding: 10px 5px; text-align: center; width: 50px;">Pos</th>
+                        <th style="padding: 10px; text-align: left;">Piloto</th>
+                        <th style="padding: 10px; text-align: center;">Baterias</th>
+                        <th style="padding: 10px; text-align: center;">Vitórias</th>
+                        <th style="padding: 10px; text-align: center;">Poles</th>
+                        <th style="padding: 10px; text-align: center;">V. Rápidas</th>
+                        <th style="padding: 10px; text-align: center;">Etapas</th>
+                        <th style="padding: 10px; text-align: center; font-weight: bold; font-size: 16px;">Pontos</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    standings.forEach((driver, index) => {
+        const position = index + 1;
+        const points = useDiscard ? driver.totalPointsWithDiscard : driver.totalPoints;
+        const rowBg = index % 2 === 0 ? '#ffffff' : '#f8fafc';
+
+        let posStyle = "font-weight: bold; font-family: 'Racing Sans One', sans-serif; font-size: 16px;";
+        if (position === 1) posStyle += ' color: #b45309; background-color: #fef08a; border-radius: 4px; padding: 2px 6px;';
+        else if (position === 2) posStyle += ' color: #334155; background-color: #e2e8f0; border-radius: 4px; padding: 2px 6px;';
+        else if (position === 3) posStyle += ' color: #78350f; background-color: #fed7aa; border-radius: 4px; padding: 2px 6px;';
+
+        html += `
+            <tr style="background-color: ${rowBg}; border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px 5px; text-align: center;"><span style="${posStyle}">${position}º</span></td>
+                <td style="padding: 8px; font-weight: 600; text-transform: uppercase;">${driver.name}</td>
+                <td style="padding: 8px; text-align: center;">${driver.racesParticipated}</td>
+                <td style="padding: 8px; text-align: center; color: #dc2626; font-weight: bold;">${driver.victories}</td>
+                <td style="padding: 8px; text-align: center; color: #2563eb; font-weight: bold;">${driver.poles}</td>
+                <td style="padding: 8px; text-align: center; color: #059669; font-weight: bold;">${driver.fastestLaps}</td>
+                <td style="padding: 8px; text-align: center;">${driver.stagesParticipated.length}</td>
+                <td style="padding: 8px; text-align: center; font-weight: 800; font-size: 16px; color: #111; font-family: 'Racing Sans One', sans-serif;">${points}</td>
+            </tr>
+        `;
+    });
+
+    html += `
+                </tbody>
+            </table>
+            
+            <div style="text-align: center; margin-top: 20px; font-size: 12px; color: #666; border-top: 1px solid #ddd; padding-top: 10px;">
+                <p style="margin: 0; font-family: 'Racing Sans One', sans-serif; font-size: 14px;">${currentChampionshipInfo.titulo_campeonato || "3º Troféu Cataratas de Kart Rental 2025"}</p>
+                <p style="margin: 4px 0 0 0;">Impressão Oficial</p>
+            </div>
+        </div>
+    `;
+
+    return html;
+}
+
 // Função para abrir classificação em nova janela para impressão
 function printClassification(championship) {
-    const html = generateClassificationHTML(championship);
+    const html = generatePrintClassificationHTML(championship);
     const printWindow = window.open('', '_blank');
 
     printWindow.document.write(`
@@ -1247,12 +1442,15 @@ function printClassification(championship) {
         <head>
             <title>Classificação do Campeonato</title>
             <meta charset="utf-8">
+            <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;1,800&family=Racing+Sans+One&display=swap" rel="stylesheet">
             <style>
                 @media print {
-                    body { margin: 0; }
-                    @page { margin: 1cm; }
+                    body { margin: 0; padding: 0; background-color: white; }
+                    @page { size: A4 portrait; margin: 1cm; }
+                    /* Prevent table rows from separating across pages */
+                    tr { page-break-inside: avoid; break-inside: avoid; }
                 }
-                body { margin: 20px; }
+                body { margin: 20px; background-color: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             </style>
         </head>
         <body>
@@ -1264,10 +1462,10 @@ function printClassification(championship) {
     printWindow.document.close();
     printWindow.focus();
 
-    // Auto-print após carregar
+    // Aguarda o carregamento das fontes antes de chamar print()
     setTimeout(() => {
         printWindow.print();
-    }, 500);
+    }, 1000);
 }
 
 // Função para mostrar feedback visual
@@ -1332,11 +1530,7 @@ function createExportButtons() {
                 Copiar
             </button>
             
-            <button onclick="downloadClassificationAsText(championship)" 
-                    style="background: #388e3c; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: background 0.2s;">
-                <i class="material-icons" style="font-size: 18px;">download</i>
-                Baixar TXT
-            </button>
+    
             
             <button onclick="exportClassificationAsImage(championship)" 
                     style="background: #e91e63; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: background 0.2s;">
@@ -1364,7 +1558,7 @@ function addExportButtonsToClassification() {
 function initializeCompleteSystem(championship) {
     const originalAddStage = championship.addStage.bind(championship);
 
-    championship.addStage = function(stageData) {
+    championship.addStage = function (stageData) {
         originalAddStage(stageData);
         // Atualiza stats cards e classificação
         updateStatsCardsAndClassification(this);
