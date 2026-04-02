@@ -1,0 +1,21 @@
+{
+  "name": "3º Troféu Cataratas de Kart",
+  "short_name": "Kart Cataratas",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#111827",
+  "description": "Dashboard do Campeonato 3º Troféu Cataratas de Kart Rental",
+  "icons": [
+    {
+      "src": "assets/img/kart-loading.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/img/kart-loading.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
