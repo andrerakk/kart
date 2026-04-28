@@ -993,9 +993,10 @@ function generateChampionshipSituation(championship) {
     const leader = standings[0];
     const second = standings[1];
     const leaderNoDiscard = standingsNoDiscard[0];
+    const secondNoDiscard = standingsNoDiscard[1];
 
     const pointsDiff = leader.totalPointsWithDiscard - second.totalPointsWithDiscard;
-    const pointsDiffNoDiscard = leaderNoDiscard.totalPoints - (standingsNoDiscard[1]?.totalPoints || 0);
+    const pointsDiffNoDiscard = leaderNoDiscard.totalPoints - secondNoDiscard.totalPoints;
 
     const currentStages = championship.stages.length;
     const remainingStages = championship.config.totalStages - currentStages;
@@ -1011,27 +1012,46 @@ function generateChampionshipSituation(championship) {
     }
 
     let situationHtml = `
-            <div class="result-item" style="border-left: 4px solid #3b82f6; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px;">
-                <p style="margin: 0; color: #93c5fd; font-size: 15px;"><strong>${leader.name} lidera</strong> com ${pointsDiffNoDiscard} pontos de vantagem`;
+            <div class="result-item" style="border-left: 4px solid #3b82f6; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px;">`;
 
-    if (pointsDiff !== pointsDiffNoDiscard) {
-        situationHtml += `, mas, considerando os descartes essa diferença ${pointsDiffNoDiscard < pointsDiff ? 'aumenta para' : 'diminui para'} ${pointsDiff} pontos`;
+    if (leader.name === leaderNoDiscard.name) {
+        if (pointsDiffNoDiscard === 0 && pointsDiff === 0) {
+            situationHtml += `<p style="margin: 0; color: #93c5fd; font-size: 15px;"><strong>Campeonato empatado</strong> na liderança entre ${leader.name} e ${second.name}.</p>`;
+        } else if (pointsDiffNoDiscard === 0) {
+            situationHtml += `<p style="margin: 0; color: #93c5fd; font-size: 15px;">O campeonato está empatado nos pontos brutos, mas aplicando os descartes, <strong>${leader.name} lidera</strong> com ${pointsDiff} pontos de vantagem.</p>`;
+        } else {
+            situationHtml += `<p style="margin: 0; color: #93c5fd; font-size: 15px;"><strong>${leader.name} lidera</strong> com ${pointsDiffNoDiscard} pontos de vantagem nos pontos brutos`;
+            if (pointsDiff === 0) {
+                situationHtml += `, mas, considerando os descartes, o campeonato está <strong>empatado</strong> com ${second.name} na liderança.`;
+            } else if (pointsDiff !== pointsDiffNoDiscard) {
+                situationHtml += `, mas com os descartes essa diferença ${pointsDiffNoDiscard < pointsDiff ? 'aumenta para' : 'cai para'} ${pointsDiff} pontos.`;
+            } else {
+                situationHtml += `.`;
+            }
+            situationHtml += '</p>';
+        }
+    } else {
+        situationHtml += `<p style="margin: 0; color: #93c5fd; font-size: 15px;">Disputa acirrada! <strong>${leaderNoDiscard.name}</strong> lidera nos pontos brutos com ${pointsDiffNoDiscard} de vantagem. `;
+        if (pointsDiff === 0) {
+            situationHtml += `Porém, aplicando os descartes, o campeonato fica <strong>empatado</strong> na liderança com <strong>${leader.name}</strong>!</p>`;
+        } else {
+            situationHtml += `Porém, aplicando os descartes, <strong>${leader.name}</strong> assume a verdadeira liderança com ${pointsDiff} pontos de vantagem.</p>`;
+        }
     }
-    situationHtml += '</p>';
 
     if (remainingStages > 0) {
         situationHtml += `
-                <p style="margin: 0; color: #93c5fd; font-size: 15px;"><strong>${remainingStages} etapa${remainingStages > 1 ? 's' : ''} restante${remainingStages > 1 ? 's' : ''}</strong> com aproximadamente ${pointsRemaining} pontos ainda em disputa</p>
+                <p style="margin: 0; color: #93c5fd; font-size: 15px;"><strong>${remainingStages} etapa${remainingStages > 1 ? 's' : ''} restante${remainingStages > 1 ? 's' : ''}</strong> com aproximadamente ${pointsRemaining} pontos ainda em disputa.</p>
         `;
 
         if (specialStagesRemaining > 0) {
             situationHtml += `
-                <p style="margin: 0; color: #93c5fd; font-size: 15px;"><strong>Fases especiais</strong> podem mudar tudo (${specialStagesRemaining} etapa${specialStagesRemaining > 1 ? 's' : ''} com pontuação extra)</p>
+                <p style="margin: 0; color: #93c5fd; font-size: 15px;"><strong>Fases especiais</strong> podem mudar tudo (${specialStagesRemaining} etapa${specialStagesRemaining > 1 ? 's' : ''} com pontuação extra).</p>
             `;
         }
     } else {
         situationHtml += `
-                <p style="margin: 0; color: #93c5fd; font-size: 15px;"><strong>Campeonato finalizado!</strong> ${leader.name} é o campeão com ${leader.totalPointsWithDiscard} pontos</p>
+                <p style="margin: 0; color: #93c5fd; font-size: 15px;"><strong>Campeonato finalizado!</strong> ${leader.name} é o campeão com ${leader.totalPointsWithDiscard} pontos!</p>
         `;
     }
 
