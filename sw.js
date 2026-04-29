@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kart-dashboard-v2';
+const CACHE_NAME = 'kart-dashboard-v3';
 const urlsToCache = [
   './',
   './index.html',
@@ -31,12 +31,12 @@ self.addEventListener('fetch', event => {
         if (response) {
           return response;
         }
-        
+
         // Ou faz a requisição para a rede
         return fetch(event.request).catch(() => {
-            // Em caso de falha de rede ao buscar outras páginas, 
-            // aqui poderíamos retornar uma página offline customizada
-            console.error('Falha na conexão da rede:', event.request.url);
+          // Em caso de falha de rede ao buscar outras páginas, 
+          // aqui poderíamos retornar uma página offline customizada
+          console.error('Falha na conexão da rede:', event.request.url);
         });
       })
   );
