@@ -46,7 +46,8 @@ function loadChampionshipInfo(url) {
         return;
     }
 
-    Papa.parse(url, {
+    const noCacheUrl = url + (url.includes('?') ? '&' : '?') + '_t=' + new Date().getTime();
+    Papa.parse(noCacheUrl, {
         download: true,
         header: true,
         skipEmptyLines: true,
@@ -303,7 +304,8 @@ function loadCategoryData(categoryId) {
         headerTitleElement.innerHTML = `Carregando dados para: ${category.name}...`;
     }
 
-    Papa.parse(category.csvUrl, {
+    const noCacheUrl = category.csvUrl + (category.csvUrl.includes('?') ? '&' : '?') + '_t=' + new Date().getTime();
+    Papa.parse(noCacheUrl, {
         download: true,
         header: true,
         skipEmptyLines: true,
